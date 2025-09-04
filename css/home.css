@@ -344,28 +344,23 @@ body {
 
 /* ===== Inspiratie ===== */
 .inspiration {
-  /* minder witruimte boven, normale onderruimte */
   padding: clamp(16px, 3vw, 20px) 0 clamp(28px, 5vw, 48px);
   font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   color: #111;
-
-  /* gedeelde variabelen voor kaarten en gap (desktop/tablet) */
   --gap: 24px;
-  --card-w: 400px; /* vaste kaartbreedte op desktop/tablet → geen rescaling */
+  --card-w: 400px;
 }
 
 .inspiration__wrap {
-  /* Zorg dat exact 3 kaarten + 2 gaps passen → niets afgesneden op desktop */
   width: min(calc(3 * var(--card-w) + 2 * var(--gap)), 92vw);
   margin-inline: auto;
 }
 
-/* Titel: “Wat wij doen” gecentreerd */
 .inspiration__title {
   margin: 0 0 clamp(12px, 2vw, 16px);
-  font-weight: 400;                 /* niet bold */
-  text-align: center;               /* midden */
-  font-size: 0;                     /* verberg originele inhoud visueel */
+  font-weight: 400;
+  text-align: center;
+  font-size: 0;
 }
 .inspiration__title::after {
   content: "Wat wij doen";
@@ -374,44 +369,34 @@ body {
   display: inline-block;
 }
 
-/* Track: flexrij; slider zodra 3 kaarten niet passen; niet schalen */
 .inspiration__track {
   display: flex;
   gap: var(--gap);
   flex-wrap: nowrap;
-
   width: 100%;
-  overflow-x: auto;                 /* slider waar nodig */
+  overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: none;    /* soepele snaps */
+  scroll-snap-type: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   overscroll-behavior-x: contain;
-
-  justify-content: flex-start;      /* links geankerd → altijd beide richtingen scrollbaar */
+  justify-content: flex-start;
 }
-
-/* Scrollbar verbergen */
 .inspiration__track::-webkit-scrollbar { display: none; }
 .inspiration__track { scrollbar-width: none; }
 
-/* Kaart: vaste breedte, 8px radius, overflow hidden */
 .cat-card {
-  flex: 0 0 var(--card-w);          /* nooit krimpen → slider i.p.v. rescale */
+  flex: 0 0 var(--card-w);
   max-width: var(--card-w);
   scroll-snap-align: unset;
   text-decoration: none;
   color: inherit;
-
   display: grid;
   gap: 12px;
-
   border-radius: 8px;
   overflow: hidden;
   background: #fff;
 }
-
-/* Media: vast 16:9 grijs vlak; PNG centred */
 .cat-card__media {
   background: #e5e5e5;
   aspect-ratio: 16 / 9;
@@ -421,8 +406,6 @@ body {
   border-radius: 8px;
   overflow: hidden;
 }
-
-/* Alleen de PNG krimpt bij hover/focus/actief */
 .cat-card__media img {
   max-width: 88%;
   max-height: 88%;
@@ -431,48 +414,24 @@ body {
   transform: scale(1);
   transition: transform .25s ease;
 }
-
-/* Tekst in de kaart: links uitgelijnd */
 .cat-card__text {
   display: grid;
   gap: 6px;
   text-align: left;
   padding: 0 6px 10px;
 }
-
-/* Titel (fade swap naar “Offerte aanvragen” op hover/actief) */
-.cat-card__title {
-  position: relative;
-  display: inline-block;
-  line-height: 1.15;
-  font-size: clamp(16px, 2vw, 20px);
-  font-weight: 400;
-}
-.cat-card__title-default,
-.cat-card__title-hover {
-  transition: opacity .18s ease;    /* alleen smooth wissel, geen kleurwijziging hier */
-  white-space: nowrap;
-}
-.cat-card__title-default { color: #000;   opacity: 1; }
+.cat-card__title { position: relative; display: inline-block; line-height: 1.15; font-size: clamp(16px, 2vw, 20px); font-weight: 400; }
+.cat-card__title-default, .cat-card__title-hover { transition: opacity .18s ease; white-space: nowrap; }
+.cat-card__title-default { color: #000; opacity: 1; }
 .cat-card__title-hover   { color: #ffcd0a; position: absolute; inset: 0 auto auto 0; opacity: 0; pointer-events: none; }
+.cat-card__desc { color: #6b7280; font-size: clamp(14px, 1.6vw, 16px); }
 
-/* Omschrijving: ALTIJD de originele beschrijving; geen wissel meer */
-.cat-card__desc {
-  color: #6b7280;
-  font-size: clamp(14px, 1.6vw, 16px);
-}
-
-/* Hover/focus (desktop) + .is-active (mobile) */
 .cat-card:hover .cat-card__media,
 .cat-card:focus-visible .cat-card__media,
-.cat-card.is-active .cat-card__media {
-  background: #ffcd0a;
-}
+.cat-card.is-active .cat-card__media { background: #ffcd0a; }
 .cat-card:hover .cat-card__media img,
 .cat-card:focus-visible .cat-card__media img,
-.cat-card.is-active .cat-card__media img {
-  transform: scale(0.95);           /* alleen PNG krimpt */
-}
+.cat-card.is-active .cat-card__media img { transform: scale(0.95); }
 .cat-card:hover .cat-card__title-default,
 .cat-card:focus-visible .cat-card__title-default,
 .cat-card.is-active .cat-card__title-default { opacity: 0; }
@@ -480,28 +439,62 @@ body {
 .cat-card:focus-visible .cat-card__title-hover,
 .cat-card.is-active .cat-card__title-hover   { opacity: 1; }
 
-/* Toetsenbord focus */
-.cat-card:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
+.cat-card:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
 
-/* Mobile: full-bleed track + extra witruimte links/rechts zodat
-   elke kaart exact in het midden van het SCHERM kan staan */
+/* Alleen op mobile: kleinere kaarten + pijlen (zonder vierkantje) */
 @media (max-width: 768px) {
-  .inspiration {
-    --card-w: 300px; /* vaste kaartbreedte mobile */
-  }
+  .inspiration { --card-w: 260px; }
+
   .inspiration__track {
-    /* maak de track full-bleed t.o.v. viewport voor perfecte centrering */
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-
-    /* extra linker/rechter padding = (viewport - kaartbreedte)/2 */
     padding-inline: calc((100vw - var(--card-w)) / 2);
   }
+
+  .inspiration__nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  /* Knoppen: géén vierkant, alleen de afbeelding */
+  .insp-nav__btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform .18s ease;
+  }
+  .insp-nav__btn:active { transform: scale(1.06); } /* subtiel groter bij tikken */
+
+  .insp-nav__img {
+    width: 26px;
+    height: 26px;
+    display: block;
+    pointer-events: none; /* tik gaat naar de knop */
+    user-select: none;
+  }
+
+  /* Disabled pijl niet klikbaar */
+  .insp-nav__btn[aria-disabled="true"] { pointer-events: none; }
 }
 
+/* Desktop/tablet: nav verbergen */
+@media (min-width: 769px) {
+  .inspiration__nav { display: none; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .insp-nav__btn { transition: none; }
+}
 
 /* Page Loader */
 .page-loader {

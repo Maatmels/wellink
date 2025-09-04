@@ -215,3 +215,11 @@
     contain: layout paint;
   }
 }
+/* Overlay must not block touches when menu is closed */
+.site-dim-overlay { pointer-events: none; }
+
+/* Only capture clicks when the menu is open */
+body.menu-open .site-dim-overlay { pointer-events: auto; }
+
+/* Extra safety: if the overlay uses [hidden], make sure it's display:none */
+.site-dim-overlay[hidden] { display: none !important; }

@@ -38,14 +38,17 @@
 })();
 
 
-// Vul data-alt op de beschrijving met de titeltekst + markeer middelste card op mobile
+// Mobile: middelste kaart in beeld + nav-pijlen wisselen naar grijs aan randen
 (function () {
   const track = document.querySelector('.inspiration__track');
   if (!track) return;
   const cards = Array.from(track.querySelectorAll('.cat-card'));
   const mql = window.matchMedia('(max-width: 768px)');
 
-  // 1) data-alt zetten voor eventuele toekomstige swaps (ongevaarlijk)
+  const prevBtn = document.querySelector('.inspiration__nav .prev');
+  const nextBtn = document.querySelector('.inspiration__nav .next');
+
+  // (ongevaarlijk laten staan)
   cards.forEach(card => {
     const desc = card.querySelector('.cat-card__desc');
     const titleDef = card.querySelector('.cat-card__title-default');
@@ -54,7 +57,6 @@
     }
   });
 
-  // Hulpfuncties
   function getCenteredIndex() {
     const center = track.scrollLeft + track.clientWidth / 2;
     let iBest = 0, dBest = Infinity;
@@ -66,47 +68,78 @@
     return iBest;
   }
 
-  function centerIndex(i) {
+  function centerIndex(i, behavior = 'auto') {
     const card = cards[i];
     if (!card) return;
     const left = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
-    // direct centreren (geen animatie bij eerste load)
-    track.scrollTo({ left, behavior: 'auto' });
+    track.scrollTo({ left, behavior });
+  }
+
+  function updateNavState() {
+    if (!(prevBtn && nextBtn)) return;
+    // Randen bepalen op basis van scroll positie (tolerantie voor floats)
+    const tol = 2;
+    const atStart = track.scrollLeft <= tol;
+    const maxLeft = track.scrollWidth - track.clientWidth;
+    const atEnd = track.scrollLeft >= (maxLeft - tol);
+
+    // Knoppen togglen + icon wissel
+    toggleArrow(prevBtn, atStart);
+    toggleArrow(nextBtn, atEnd);
+  }
+
+  function toggleArrow(btn, disabled) {
+    btn.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    const img = btn.querySelector('.insp-nav__img');
+    if (!img) return;
+    const activeSrc = img.getAttribute('data-src-active');
+    const disabledSrc = img.getAttribute('data-src-disabled');
+    img.src = disabled ? disabledSrc : activeSrc;
   }
 
   function syncActive() {
     if (!mql.matches) { cards.forEach(c => c.classList.remove('is-active')); return; }
     const idx = getCenteredIndex();
     cards.forEach((c,i) => c.classList.toggle('is-active', i === idx));
+    updateNavState();
   }
 
-  // Scroll/resize -> active kaart = die het meest in het midden staat (alleen mobile)
+  // Scroll/resize
   track.addEventListener('scroll', () => requestAnimationFrame(syncActive), { passive: true });
   window.addEventListener('resize', () => requestAnimationFrame(syncActive));
 
-  // --- NIEUW: op MOBILE direct de 2e (middelste) kaart tonen ---
+  // INIT
   requestAnimationFrame(() => {
     if (mql.matches && cards[1]) {
-      centerIndex(1);   // 2e kaart (index 1) in het midden
+      centerIndex(1, 'auto'); // start met middelste kaart
     }
     syncActive();
   });
 
-  // Als je viewport verandert en je komt op mobile, ook dan de 2e centreren
   function handleMQChange(e) {
     if (e.matches) {
       requestAnimationFrame(() => {
-        if (cards[1]) centerIndex(1);
+        if (cards[1]) centerIndex(1, 'auto');
         syncActive();
       });
     } else {
-      // verlaat mobile: haal actieve state weg
       cards.forEach(c => c.classList.remove('is-active'));
     }
   }
   if (mql.addEventListener) mql.addEventListener('change', handleMQChange);
-  else mql.addListener(handleMQChange); // oudere Safari
+  else mql.addListener(handleMQChange);
+
+  // NAV actions
+  function scrollByCards(delta) {
+    const current = getCenteredIndex();
+    const target = Math.max(0, Math.min(cards.length - 1, current + delta));
+    centerIndex(target, 'smooth');
+    setTimeout(() => syncActive(), 90);
+  }
+  if (prevBtn) prevBtn.addEventListener('click', () => { if (mql.matches) scrollByCards(-1); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { if (mql.matches) scrollByCards(1); });
 })();
+
 
 (function () {
   const loader = document.getElementById('page-loader');
