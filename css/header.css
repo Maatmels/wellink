@@ -197,3 +197,21 @@
     outline-offset: 2px;
   }
   
+/* iOS fix: center without transform so fixed stays fixed */
+@media (max-width: 768px) {
+  .site-header {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: 0;
+    right: 0;
+    margin-inline: auto;                 /* centers the fixed box */
+    width: clamp(240px, 92vw, 380px);
+    transform: none;                     /* kill translateX on mobile */
+    -webkit-transform: none;
+
+    /* stability helpers for Safari */
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    contain: layout paint;
+  }
+}
