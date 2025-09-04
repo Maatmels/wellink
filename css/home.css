@@ -383,7 +383,7 @@ body {
   width: 100%;
   overflow-x: auto;                 /* slider waar nodig */
   overflow-y: hidden;
-  scroll-snap-type: x proximity;    /* soepele snaps */
+  scroll-snap-type: none;    /* soepele snaps */
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   overscroll-behavior-x: contain;
@@ -399,7 +399,7 @@ body {
 .cat-card {
   flex: 0 0 var(--card-w);          /* nooit krimpen → slider i.p.v. rescale */
   max-width: var(--card-w);
-  scroll-snap-align: start;
+  scroll-snap-align: unset;
   text-decoration: none;
   color: inherit;
 

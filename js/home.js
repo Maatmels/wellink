@@ -45,7 +45,7 @@
   const cards = Array.from(track.querySelectorAll('.cat-card'));
   const mql = window.matchMedia('(max-width: 768px)');
 
-  // 1) data-alt zetten voor smooth swap van beschrijving
+  // 1) data-alt zetten voor eventuele toekomstige swaps (ongevaarlijk)
   cards.forEach(card => {
     const desc = card.querySelector('.cat-card__desc');
     const titleDef = card.querySelector('.cat-card__title-default');
@@ -54,7 +54,7 @@
     }
   });
 
-  // 2) op mobile: middelste card actief houden terwijl je scrolt
+  // Hulpfuncties
   function getCenteredIndex() {
     const center = track.scrollLeft + track.clientWidth / 2;
     let iBest = 0, dBest = Infinity;
@@ -65,17 +65,48 @@
     });
     return iBest;
   }
+
+  function centerIndex(i) {
+    const card = cards[i];
+    if (!card) return;
+    const left = card.offsetLeft - (track.clientWidth - card.clientWidth) / 2;
+    // direct centreren (geen animatie bij eerste load)
+    track.scrollTo({ left, behavior: 'auto' });
+  }
+
   function syncActive() {
     if (!mql.matches) { cards.forEach(c => c.classList.remove('is-active')); return; }
     const idx = getCenteredIndex();
     cards.forEach((c,i) => c.classList.toggle('is-active', i === idx));
   }
+
+  // Scroll/resize -> active kaart = die het meest in het midden staat (alleen mobile)
   track.addEventListener('scroll', () => requestAnimationFrame(syncActive), { passive: true });
   window.addEventListener('resize', () => requestAnimationFrame(syncActive));
-  // initial
-  requestAnimationFrame(syncActive);
-})();
 
+  // --- NIEUW: op MOBILE direct de 2e (middelste) kaart tonen ---
+  requestAnimationFrame(() => {
+    if (mql.matches && cards[1]) {
+      centerIndex(1);   // 2e kaart (index 1) in het midden
+    }
+    syncActive();
+  });
+
+  // Als je viewport verandert en je komt op mobile, ook dan de 2e centreren
+  function handleMQChange(e) {
+    if (e.matches) {
+      requestAnimationFrame(() => {
+        if (cards[1]) centerIndex(1);
+        syncActive();
+      });
+    } else {
+      // verlaat mobile: haal actieve state weg
+      cards.forEach(c => c.classList.remove('is-active'));
+    }
+  }
+  if (mql.addEventListener) mql.addEventListener('change', handleMQChange);
+  else mql.addListener(handleMQChange); // oudere Safari
+})();
 
 (function () {
   const loader = document.getElementById('page-loader');
