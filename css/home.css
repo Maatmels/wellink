@@ -1,0 +1,530 @@
+/* ===== Font (alleen deze pagina) ===== */
+@font-face {
+  font-family: "Jost";
+  src: url("../fonts/Jost-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== Basis ===== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  color: #111;
+  background: #fff;
+  line-height: 1.5;
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ===== Vars voor desktop-hoogte ===== */
+:root {
+  --hero-h-desktop: 50vh; /* <<< geforceerde, duidelijk kleinere hoogte op desktop */
+}
+
+/* ===== HERO ===== */
+.split-hero {
+  position: relative;
+  width: 100%;
+  height: 85vh;                    /* desktop: iets lager dan fullscreen */
+}
+
+.hero-media {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  overflow: hidden;
+  z-index: 0;                       /* onder overlay & tekst */
+}
+.hero-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                 /* vult, cropt waar nodig */
+  object-position: center;
+}
+/* Donkerdere overlay op desktop */
+.hero-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.25);      /* ~25% zwart: beter leesbaar */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Tekstlaag: gecentreerd bovenop (desktop) */
+.hero-text {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: transparent;           /* GEEN blauw op desktop */
+  color: #fff;
+  padding: clamp(16px, 4vw, 32px);
+  text-align: center;
+  z-index: 2;                        /* boven overlay */
+}
+.hero-text-inner {
+  max-width: 720px;
+  width: min(90%, 720px);
+  display: grid;
+  gap: clamp(12px, 2vw, 20px);
+  justify-items: center;
+}
+.hero-text h1 {
+  margin: 0;
+  font-size: clamp(26px, 4.2vw, 48px);
+  line-height: 1.06;
+  font-weight: 600;
+  color: #fff;
+}
+.hero-text p {
+  margin: 0;
+  font-size: clamp(15px, 1.4vw, 18px);
+  color: #cfd6e6;
+}
+
+/* CTA: 8px ronding en jouw breedte-animatie */
+.cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 10px 16px;
+  border: none;
+  background: transparent;
+  isolation: isolate;
+  border-radius: 8px;                /* ronding */
+}
+.cta > span { position: relative; z-index: 1; }
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #ffcd0a;
+  z-index: 0;
+  transform: scaleX(1);
+  transform-origin: center;
+  transition: transform .25s ease;
+  border-radius: 8px;                /* ronding geelvlak */
+}
+.cta:hover::before,
+.cta:focus-visible::before { transform: scaleX(1.20); }
+.cta:active::before        { transform: scaleX(1.30); }
+.cta:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+/* ===== MOBILE (≤768px) =====
+   - Afbeelding 60% van het scherm hoog (zodat blauw blok meteen zichtbaar is)
+   - Blauw tekstblok ONDER de afbeelding
+*/
+@media (max-width: 768px) {
+  .split-hero {
+    height: auto;                    /* totale hoogte = beeld + tekstblok */
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .hero-media {
+    position: relative;              /* niet overlappen */
+    height: 60svh;                   /* jouw instelling */
+    height: 60vh;                    /* fallback */
+    min-height: 360px;               /* optioneel: ondergrens */
+    z-index: 0;
+  }
+  .hero-media::after {
+    content: none;                   /* GEEN overlay op mobile */
+  }
+  .hero-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;               /* ‘ingezoomd’ op small screens — gewenst */
+    object-position: center;
+    display: block;
+  }
+
+  .hero-text {
+    position: static;                /* onder de afbeelding */
+    background: #18263f;             /* blauw blok op mobile */
+    color: #fff;
+    padding: clamp(22px, 5vw, 40px);
+    text-align: center;
+    z-index: 0;
+  }
+  .hero-text-inner {
+    max-width: 620px;
+    width: min(92%, 620px);
+    justify-items: center;
+  }
+}
+
+
+/* USP Banner */
+.usp-banner {
+  position: relative;
+  background: #e5e5e5;            
+  color: #18263f;                 
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 28px);
+  overflow: hidden;                
+}
+
+.usp-banner::before,
+.usp-banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: clamp(18px, 8vw, 90px);
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.usp-banner::before {
+  left: 0;
+  background: linear-gradient(to right, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+}
+.usp-banner::after {
+  right: 0;
+  background: linear-gradient(to left, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+}
+
+.usp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;        
+  gap: 32px;                      
+  flex-wrap: nowrap;              
+}
+
+.usp-item {
+  flex: 0 0 auto;                
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #18263f;
+  text-transform: uppercase;      
+  letter-spacing: .04em;
+  font-size: clamp(14px, 1.6vw, 18px);
+  white-space: nowrap;            
+}
+
+.usp-item img {
+  width: 20px;                    
+  height: 20px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+
+
+/* Sticky CTA (onderin gecentreerd, desktop + mobile) */
+/* ===== Font (alleen deze pagina) ===== */
+@font-face {
+  font-family: "Jost";
+  src: url("../fonts/Jost-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ===== Basis ===== */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  color: #111;
+  background: #fff;
+  line-height: 1.5;
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ===== Vars voor desktop-hoogte ===== */
+:root {
+  --hero-h-desktop: 50vh; /* door jou ingesteld */
+}
+
+
+
+/* ===== USP Banner ===== */
+.usp-banner {
+  position: relative;
+  background: #e5e5e5;
+  color: #18263f;
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 28px);
+  overflow: hidden;
+}
+
+.usp-banner::before,
+.usp-banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: clamp(18px, 8vw, 90px);
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+.usp-banner::before {
+  left: 0;
+  background: linear-gradient(to right, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+}
+.usp-banner::after {
+  right: 0;
+  background: linear-gradient(to left, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+}
+
+/* één rij, gecentreerd, vaste dichte afstand; nooit wrap */
+.usp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  flex-wrap: nowrap;
+}
+
+.usp-item {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #18263f;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  font-size: clamp(14px, 1.6vw, 18px);
+  white-space: nowrap;
+}
+
+.usp-item img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex: 0 0 auto;
+}
+
+/* --- FIX: mobile volgorde hero split --- */
+@media (max-width: 768px) {
+  .split-hero {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto auto !important;
+    grid-template-areas:
+      "media"
+      "text" !important;
+  }
+  .hero-media { grid-area: media !important; }
+  .hero-text  { grid-area: text  !important; }
+}
+
+
+
+/* ===== Inspiratie ===== */
+.inspiration {
+  /* minder witruimte boven, normale onderruimte */
+  padding: clamp(16px, 3vw, 20px) 0 clamp(28px, 5vw, 48px);
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: #111;
+
+  /* gedeelde variabelen voor kaarten en gap (desktop/tablet) */
+  --gap: 24px;
+  --card-w: 400px; /* vaste kaartbreedte op desktop/tablet → geen rescaling */
+}
+
+.inspiration__wrap {
+  /* Zorg dat exact 3 kaarten + 2 gaps passen → niets afgesneden op desktop */
+  width: min(calc(3 * var(--card-w) + 2 * var(--gap)), 92vw);
+  margin-inline: auto;
+}
+
+/* Titel: “Wat wij doen” gecentreerd */
+.inspiration__title {
+  margin: 0 0 clamp(12px, 2vw, 16px);
+  font-weight: 400;                 /* niet bold */
+  text-align: center;               /* midden */
+  font-size: 0;                     /* verberg originele inhoud visueel */
+}
+.inspiration__title::after {
+  content: "Wat wij doen";
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.2;
+  display: inline-block;
+}
+
+/* Track: flexrij; slider zodra 3 kaarten niet passen; niet schalen */
+.inspiration__track {
+  display: flex;
+  gap: var(--gap);
+  flex-wrap: nowrap;
+
+  width: 100%;
+  overflow-x: auto;                 /* slider waar nodig */
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;    /* soepele snaps */
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+
+  justify-content: flex-start;      /* links geankerd → altijd beide richtingen scrollbaar */
+}
+
+/* Scrollbar verbergen */
+.inspiration__track::-webkit-scrollbar { display: none; }
+.inspiration__track { scrollbar-width: none; }
+
+/* Kaart: vaste breedte, 8px radius, overflow hidden */
+.cat-card {
+  flex: 0 0 var(--card-w);          /* nooit krimpen → slider i.p.v. rescale */
+  max-width: var(--card-w);
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+
+  display: grid;
+  gap: 12px;
+
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+/* Media: vast 16:9 grijs vlak; PNG centred */
+.cat-card__media {
+  background: #e5e5e5;
+  aspect-ratio: 16 / 9;
+  display: grid;
+  place-items: center;
+  transition: background-color .25s ease;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Alleen de PNG krimpt bij hover/focus/actief */
+.cat-card__media img {
+  max-width: 88%;
+  max-height: 88%;
+  object-fit: contain;
+  display: block;
+  transform: scale(1);
+  transition: transform .25s ease;
+}
+
+/* Tekst in de kaart: links uitgelijnd */
+.cat-card__text {
+  display: grid;
+  gap: 6px;
+  text-align: left;
+  padding: 0 6px 10px;
+}
+
+/* Titel (fade swap naar “Offerte aanvragen” op hover/actief) */
+.cat-card__title {
+  position: relative;
+  display: inline-block;
+  line-height: 1.15;
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 400;
+}
+.cat-card__title-default,
+.cat-card__title-hover {
+  transition: opacity .18s ease;    /* alleen smooth wissel, geen kleurwijziging hier */
+  white-space: nowrap;
+}
+.cat-card__title-default { color: #000;   opacity: 1; }
+.cat-card__title-hover   { color: #ffcd0a; position: absolute; inset: 0 auto auto 0; opacity: 0; pointer-events: none; }
+
+/* Omschrijving: ALTIJD de originele beschrijving; geen wissel meer */
+.cat-card__desc {
+  color: #6b7280;
+  font-size: clamp(14px, 1.6vw, 16px);
+}
+
+/* Hover/focus (desktop) + .is-active (mobile) */
+.cat-card:hover .cat-card__media,
+.cat-card:focus-visible .cat-card__media,
+.cat-card.is-active .cat-card__media {
+  background: #ffcd0a;
+}
+.cat-card:hover .cat-card__media img,
+.cat-card:focus-visible .cat-card__media img,
+.cat-card.is-active .cat-card__media img {
+  transform: scale(0.95);           /* alleen PNG krimpt */
+}
+.cat-card:hover .cat-card__title-default,
+.cat-card:focus-visible .cat-card__title-default,
+.cat-card.is-active .cat-card__title-default { opacity: 0; }
+.cat-card:hover .cat-card__title-hover,
+.cat-card:focus-visible .cat-card__title-hover,
+.cat-card.is-active .cat-card__title-hover   { opacity: 1; }
+
+/* Toetsenbord focus */
+.cat-card:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: 2px;
+}
+
+/* Mobile: full-bleed track + extra witruimte links/rechts zodat
+   elke kaart exact in het midden van het SCHERM kan staan */
+@media (max-width: 768px) {
+  .inspiration {
+    --card-w: 300px; /* vaste kaartbreedte mobile */
+  }
+  .inspiration__track {
+    /* maak de track full-bleed t.o.v. viewport voor perfecte centrering */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    /* extra linker/rechter padding = (viewport - kaartbreedte)/2 */
+    padding-inline: calc((100vw - var(--card-w)) / 2);
+  }
+}
+
+
+/* Page Loader */
+.page-loader {
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s cubic-bezier(.22,.61,.36,1); /* alleen opacity */
+}
+
+.page-loader__logo {
+  width: clamp(140px, 20vw, 260px);
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Alleen opacity gaat smooth; visibility schakelt daarna via JS */
+.page-loaded .page-loader {
+  opacity: 0;
+}
+
