@@ -376,7 +376,7 @@ body {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: none;
+  scroll-snap-type: none;            /* desktop/tablet: geen snap */
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   overscroll-behavior-x: contain;
@@ -388,7 +388,7 @@ body {
 .cat-card {
   flex: 0 0 var(--card-w);
   max-width: var(--card-w);
-  scroll-snap-align: unset;
+  scroll-snap-align: unset;          /* desktop/tablet: geen snap */
   text-decoration: none;
   color: inherit;
   display: grid;
@@ -441,7 +441,7 @@ body {
 
 .cat-card:focus-visible { outline: 2px solid #000; outline-offset: 2px; }
 
-/* Alleen op mobile: kleinere kaarten + pijlen (zonder vierkantje) */
+/* Alleen op mobile: kleinere kaarten + snap naar het MIDDEN + pijlen crossfade */
 @media (max-width: 768px) {
   .inspiration { --card-w: 260px; }
 
@@ -449,6 +449,14 @@ body {
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
     padding-inline: calc((100vw - var(--card-w)) / 2);
+
+    /* Snap AAN en naar het MIDDEN van de viewport */
+    scroll-snap-type: x mandatory;
+  }
+
+  .cat-card {
+    scroll-snap-align: center;       /* kaart centrum klikt in het viewport-midden */
+    scroll-snap-stop: always;        /* consistente snaps */
   }
 
   .inspiration__nav {
@@ -459,12 +467,13 @@ body {
     margin-top: 10px;
   }
 
-  /* Knoppen: géén vierkant, alleen de afbeelding */
+  /* Knoppen: losse pijl, met layered images voor smooth crossfade */
   .insp-nav__btn {
+    position: relative;
     appearance: none;
     border: 0;
     background: transparent;
-    padding: 6px;
+    padding: 6px;                    /* hitbox */
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -472,15 +481,26 @@ body {
     -webkit-tap-highlight-color: transparent;
     transition: transform .18s ease;
   }
-  .insp-nav__btn:active { transform: scale(1.06); } /* subtiel groter bij tikken */
+  .insp-nav__btn:active { transform: scale(1.06); }
 
+  /* Twee lagen: active (zwart) + disabled (grijs) */
   .insp-nav__img {
+    position: absolute;
+    inset: 0;
+    margin: auto;
     width: 26px;
     height: 26px;
     display: block;
-    pointer-events: none; /* tik gaat naar de knop */
+    pointer-events: none;
     user-select: none;
+    opacity: 1;
+    transition: opacity .22s ease;   /* smooth */
   }
+  .insp-nav__img.is-disabled-layer { opacity: 0; } /* standaard onzichtbaar */
+
+  /* Als disabled: fade zwart uit en grijs in */
+  .insp-nav__btn[aria-disabled="true"] .insp-nav__img.is-active-layer { opacity: 0; }
+  .insp-nav__btn[aria-disabled="true"] .insp-nav__img.is-disabled-layer { opacity: 1; }
 
   /* Disabled pijl niet klikbaar */
   .insp-nav__btn[aria-disabled="true"] { pointer-events: none; }
@@ -494,7 +514,9 @@ body {
 /* Reduce motion */
 @media (prefers-reduced-motion: reduce) {
   .insp-nav__btn { transition: none; }
+  .insp-nav__img { transition: none; }
 }
+
 
 /* Page Loader */
 .page-loader {
@@ -521,3 +543,294 @@ body {
   opacity: 0;
 }
 
+
+
+/* ===== Over ons (kop + blok) ===== */
+.about {
+  display: grid;
+  gap: clamp(14px, 3vw, 22px);
+  padding: clamp(24px, 6vw, 64px) 16px;
+  /* test-ruimte onderaan voor scroll-effect (laat staan zolang je test) */
+  padding-bottom: clamp(900px, 95vh, 1600px);
+}
+
+/* Kop erboven: zelfde breedte/centrering als de kaart */
+.about-header {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  .about-header { max-width: 340px; }
+}
+
+.about-kicker { color: #ffcd0a; font-size: clamp(14px, 1.6vw, 16px); letter-spacing: .02em; }
+.about-title  { margin: 4px 0 6px; font-weight: 700; font-size: clamp(22px, 3.2vw, 34px); line-height: 1.15; color: #111; }
+.about-intro  { margin: 0; color: #444; font-size: clamp(15px, 1.7vw, 16px); line-height: 1.6; }
+
+/* ===== Kaart (smal, gecentreerd) met progress-border ===== */
+.about-card {
+  --bw: 2px;          /* randdikte */
+  --p: 0;             /* 0..1 progress vanuit JS */
+  --stop: calc(var(--p)*100%);
+  --base: #f7f7f7;    /* basis grijs */
+  --yellow: #ffcd0a;
+
+  position: relative;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  border-radius: 8px;
+  background: var(--base);
+  transition: background-color .28s ease;
+  padding: clamp(14px, 2.2vw, 22px);
+}
+@media (max-width: 768px) {
+  .about-card { max-width: 340px; }
+}
+
+/* Rand boven quote, onder content */
+.about-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  z-index: 1; /* boven quote, onder content */
+  background: linear-gradient(
+    to bottom,
+    var(--yellow) 0%,
+    var(--yellow) var(--stop),
+    var(--base)   var(--stop),
+    var(--base)   100%
+  );
+  padding: var(--bw);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Hele vlak geel zodra volledig voorbij viewport-midden */
+.about-card.is-passed { background: var(--yellow); }
+
+/* Inhoud boven rand + quote */
+.about-content { position: relative; z-index: 2; display: grid; gap: 12px; }
+
+.about-two-lines { margin: 0; color: #000; line-height: 1.55; font-size: clamp(14px, 1.6vw, 15px); }
+
+.about-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.about-avatar {
+  width: clamp(36px, 7vw, 48px);
+  height: clamp(36px, 7vw, 48px);
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  box-shadow: 0 0 0 3px #fff;             /* standaard witte rand */
+  transition: box-shadow .25s ease;
+}
+.about-card.is-passed .about-avatar {
+  box-shadow: 0 0 0 3px var(--base);      /* bij gele kaart: grijze rand */
+}
+
+.about-id { display: grid; gap: 1px; }
+.about-name { font-weight: 700; color: #000; }
+.about-role { color: #333; font-weight: 400; }
+
+/* Quote onderaan rechts */
+.about-quote { position: absolute; right: 0; bottom: 0; z-index: 0; }
+.about-quote svg { display: block; width: clamp(90px, 16vw, 136px); height: auto; }
+
+/* ===== Layout: media links + pane rechts ===== */
+.about-layout {
+  display: grid;
+  align-items: center; /* <<< VERTICAAL CENTREREN kolommen (fix voor “staat hoog”) */
+  gap: clamp(18px, 4vw, 56px);
+  max-width: 1360px;
+  margin: 0 auto;
+  grid-template-columns: minmax(300px, 560px) minmax(0, 1fr);
+}
+
+/* Tekstkolom zelf ook centreren binnen de rij (extra zekerheid) */
+.about-pane { display: grid; gap: clamp(12px, 2.4vw, 28px); align-self: center; }
+
+/* ===== Fotostack links — vierkant, overlap, geen shadow ===== */
+.about-media { align-self: center; }
+
+.about-photo-stack {
+  position: relative;
+  margin: 0;
+  width: clamp(280px, 30vw, 460px);
+  aspect-ratio: 1 / 1;              /* altijd vierkant */
+  border-radius: 8px;
+  overflow: visible;
+}
+
+.about-photo-stack .photo-large {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+.about-photo-stack .photo-small {
+  position: absolute;
+  right: -22px;
+  bottom: -22px;
+  width: 75%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: none;
+  outline: 14px solid #fff;         /* witte ‘ruimte’ tussen de twee */
+}
+
+/* ===== Mobile: media ONDER het blok + knop centreren ===== */
+@media (max-width: 768px) {
+  .about-layout { grid-template-columns: 1fr; }
+  .about-pane  { order: 1; align-self: start; }
+  .about-media { order: 2; justify-self: center; }
+
+  .about-photo-stack {
+    width: clamp(240px, 68vw, 340px);
+    aspect-ratio: 1 / 1;
+  }
+  .about-photo-stack .photo-small {
+    right: -12px;
+    bottom: -12px;
+    width: 78%;
+    outline-width: 10px;
+  }
+}
+
+/* ===== Knop: Meer over ons ===== */
+.about-btn {
+  --yellow: #ffcd0a;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--yellow);     /* dunne rand */
+  border-radius: 8px;
+  background: #fff;                    /* wit vanbinnen */
+  color: #000;
+  text-decoration: none;
+  width: max-content;
+  transition: background-color .22s ease, border-color .22s ease, transform .1s ease;
+}
+.about-btn:active { transform: translateY(1px); }
+.about-btn__label { line-height: 1; }
+
+/* Icon-cirkel + pijltjes swap + pulse */
+.about-btn__icon {
+  position: relative;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--yellow);     /* zelfde dikte als knop */
+  display: grid;
+  place-items: center;
+  transition: background-color .22s ease, border-color .22s ease;
+  overflow: visible;                   /* voor pulse trail */
+}
+.about-btn__icon img {
+  position: absolute;
+  width: 18px; height: 18px;
+  inset: 0; margin: auto;
+  transform-origin: 50% 50%;
+  transition: transform .14s ease-out, opacity .14s ease-out;
+}
+.about-btn__icon .arrow-yellow { opacity: 1; transform: scale(1); }
+.about-btn__icon .arrow-white  { opacity: 0; transform: scale(0); }
+
+/* Pulse (hoofd + trail) */
+.about-btn__icon::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid #000;             /* zwart */
+  opacity: 0;
+  pointer-events: none;
+}
+.about-btn__icon::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    radial-gradient(circle at center,
+      rgba(0,0,0,.16) 0 46%,
+      rgba(0,0,0,.16) 47% 52%,
+      rgba(0,0,0,0)   53% 100%);
+}
+@keyframes aboutRingPulseMain {
+  0%   { opacity: .28; transform: scale(1);   }
+  100% { opacity: 0;    transform: scale(1.45); }
+}
+@keyframes aboutRingPulseTrail {
+  0%   { opacity: .18; transform: scale(1);   }
+  100% { opacity: 0;    transform: scale(1.35); }
+}
+
+/* Hover/focus: knop geel; pijl wit; cirkel zwart (vulling + rand) + pulses */
+.about-btn:hover,
+.about-btn:focus-visible {
+  background: var(--yellow);
+  outline: none;
+}
+.about-btn:hover .about-btn__icon,
+.about-btn:focus-visible .about-btn__icon {
+  background: #000;
+  border-color: #000;
+}
+.about-btn:hover .about-btn__icon .arrow-yellow,
+.about-btn:focus-visible .about-btn__icon .arrow-yellow {
+  opacity: 0; transform: scale(0);
+}
+.about-btn:hover .about-btn__icon .arrow-white,
+.about-btn:focus-visible .about-btn__icon .arrow-white {
+  opacity: 1; transform: scale(1);
+}
+.about-btn:hover .about-btn__icon::after,
+.about-btn:active .about-btn__icon::after {
+  animation: aboutRingPulseMain 360ms ease-out;
+}
+.about-btn:hover .about-btn__icon::before,
+.about-btn:active .about-btn__icon::before {
+  animation: aboutRingPulseTrail 480ms ease-out;
+}
+
+/* Toetsenbord focusring */
+.about-btn:focus-visible { box-shadow: 0 0 0 2px #000 inset; }
+
+/* Alleen op mobile: knop centreren onder tekst + extra marge t.o.v. images */
+@media (max-width: 768px) {
+  .about-btn {
+    display: inline-flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 14px;
+    margin-bottom: 24px;
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .about-btn,
+  .about-btn__icon,
+  .about-btn__icon img,
+  .about-btn__icon::before,
+  .about-btn__icon::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
