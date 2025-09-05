@@ -551,7 +551,7 @@ body {
   gap: clamp(14px, 3vw, 22px);
   padding: clamp(24px, 6vw, 64px) 16px;
   /* test-ruimte onderaan voor scroll-effect (laat staan zolang je test) */
-  padding-bottom: clamp(900px, 95vh, 1600px);
+ padding-bottom: clamp(20px, 4vw, 600px);
 }
 
 /* Kop erboven: zelfde breedte/centrering als de kaart */
@@ -833,4 +833,281 @@ body {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ===== Reviews ===== */
+.reviews {
+  --card-w: 340px;
+  --card-h: 150px;        /* lager dan eerst */
+  --gap: 16px;
+  --yellow: #ffcd0a;
+  --reviews-duration: 40s; /* wordt door JS gezet */
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  padding: clamp(18px, 4vw, 28px) 0;
+}
+
+.reviews__viewport {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+/* De rij met kaarten; JS dupliceert de set zodat -50% naadloos is */
+.reviews__row {
+  display: flex;
+  gap: var(--gap);
+  width: max-content;
+  padding: 6px 0;
+  animation: reviews-scroll var(--reviews-duration) linear infinite;
+  will-change: transform;
+}
+
+@keyframes reviews-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Kaart */
+.review-card {
+  width: var(--card-w);
+  min-height: var(--card-h);
+  background: #f7f7f7;
+  border: 0;                 /* geen (gele) rand meer */
+  border-radius: 8px;
+  padding: 12px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  box-sizing: border-box;
+}
+
+/* Header: avatar + naam + sterren */
+.review-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 10px;
+}
+
+.review-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ddd;
+  display: block;
+}
+
+.review-meta {
+  display: grid;
+  gap: 2px;
+}
+
+.review-name {
+  font-weight: 600;
+  color: #111;
+  line-height: 1.1;
+}
+
+.review-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.review-stars img {
+  width: 16px; height: 16px; display: block;
+}
+
+/* Tekst */
+.review-text {
+  margin: 8px 2px 0 2px;
+  color: #222;
+  line-height: 1.4;
+  align-self: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;      /* visuele back-up, JS kapt op woorden */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Mobile: iets smaller en nóg iets lagere hoogte */
+@media (max-width: 768px) {
+  .reviews {
+    --card-w: 280px;
+    --card-h: 140px;          /* lager dan eerst */
+    --gap: 12px;
+  }
+}
+
+
+
+
+/* ===== Inspiratie deck (projecten) ===== */
+.insp-cards {
+  --yellow: #ffcd0a;
+  --card-bg: #f7f7f7;
+  --radius: 8px;
+
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  color: #111;
+  padding: clamp(20px, 5vw, 48px) 16px;
+}
+.insp-cards__wrap {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: clamp(18px, 4vw, 56px);
+}
+@media (max-width: 768px) {
+  .insp-cards__wrap { grid-template-columns: 1fr; }
+}
+
+.insp-cards__heading {
+  margin: 0 0 10px;
+  font-weight: 700;
+  font-size: clamp(22px, 3.2vw, 32px);
+  line-height: 1.15;
+}
+.projects__all { margin-top: 8px; }
+
+/* Deck rechts uitlijnen */
+/* Deck moet de volledige kolom opvullen zodat kaarten links starten */
+.insp-cards__deck {
+  justify-self: stretch;
+  min-width: 0;
+  width: 100%;
+}
+
+
+/* Viewport + deck */
+.deck-viewport {
+  position: relative;
+  overflow: hidden; /* verberg stapel */
+  width: 100%;
+  min-height: 360px;
+}
+.deck-viewport.grab     { cursor: grab;     cursor: -webkit-grab; }
+.deck-viewport.grabbing { cursor: grabbing; cursor: -webkit-grabbing; }
+
+.deck {
+  /* Kaartmaten via variabelen; JS leest dit */
+  --card-w: 360px;
+  --card-h: 520px;
+  --card-gap: 18px;
+  position: relative;
+  height: var(--card-h);
+}
+/* Meer kaarten passen op brede schermen; op mobile wat kleiner */
+@media (max-width: 768px) {
+  .deck {
+    --card-w: min(82vw, 320px);
+    --card-h: 480px;
+    --card-gap: 14px;
+  }
+}
+
+/* Kaarten (absolute, JS positioneert) */
+.card {
+  position: absolute;
+  top: 0;
+  width: var(--card-w);
+  height: var(--card-h);
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  transition: transform .38s cubic-bezier(.22,.61,.36,1);
+  will-change: transform;
+}
+
+/* Boven: afbeelding (alleen image zoomt bij hover/press) */
+.card__img {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: #e5e5e5;
+}
+.card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* projectfoto’s zijn meestal jpg/cover is mooier */
+  transform: scale(1);
+  transition: transform .28s ease;
+}
+.card:hover .card__img img,
+.card:active .card__img img { transform: scale(1.06); }
+
+/* Onder: titel + “Ontdek →” link */
+.card__body {
+  padding: 12px 14px 14px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+.card__title {
+  font-weight: 700;
+  font-size: clamp(16px, 2.2vw, 18px);
+  line-height: 1.2;
+  color: #000;
+}
+.card__discover {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--yellow);
+  text-decoration: none;
+  font-weight: 500;
+}
+.card__discover .card__arrow {
+  width: 16px; height: 16px;
+  display: inline-block;
+  transform: translateZ(0);
+  transition: transform .22s ease;
+}
+.card__discover:hover .card__arrow,
+.card__discover:focus-visible .card__arrow { transform: translateX(2px); }
+
+/* Nav-pijlen onder deck (desktop only) */
+.deck-nav {
+  display: flex;
+  justify-content: flex-end; /* deck staat rechts, nav ook */
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+}
+.deck-nav__btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: transform .14s ease;
+}
+.deck-nav__btn:active { transform: scale(1.06); }
+
+.deck-nav__icon {
+  position: relative;
+  width: 28px; height: 28px;
+}
+.deck-nav__icon img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: contain;
+  transition: opacity .18s ease;
+}
+.deck-nav__icon .icon-active   { opacity: 1; }
+.deck-nav__icon .icon-disabled { opacity: 0; }
+
+/* disabled: laat grijze variant smooth infaden */
+.deck-nav__btn[aria-disabled="true"] .icon-active   { opacity: 0; }
+.deck-nav__btn[aria-disabled="true"] .icon-disabled { opacity: 1; }
+.deck-nav__btn[aria-disabled="true"] { pointer-events: none; }
+
+/* Verberg nav op mobile; daar swipe je */
+@media (max-width: 768px) {
+  .deck-nav { display: none; }
 }

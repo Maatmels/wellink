@@ -191,6 +191,55 @@
   </div>
 </section>
 
+<!-- REVIEWS -->
+<section class="reviews" aria-label="Klantreviews">
+  <div class="reviews__viewport">
+    <ul class="reviews__row" id="reviews-row" aria-live="off"></ul>
+  </div>
+</section>
+
+<!-- INSPIRATIE DECK (PROJECTEN) -->
+<section class="insp-cards" aria-label="Project inspiratie">
+  <div class="insp-cards__wrap">
+    <!-- Links (desktop) / Boven (mobile) -->
+    <aside class="insp-cards__intro">
+      <h2 class="insp-cards__heading">Doe inspiratie op</h2>
+
+      <!-- Zelfde knop-styling als je “Over ons”-knop (about-btn) -->
+      <a class="about-btn projects__all" href="/projecten/">
+        <span class="about-btn__label">Bekijk alle projecten</span>
+        <span class="about-btn__icon">
+          <img class="arrow-yellow" src="../images/pijlgeel.png" alt="" aria-hidden="true" />
+          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+        </span>
+      </a>
+    </aside>
+
+    <!-- Deck rechts -->
+    <div class="insp-cards__deck">
+      <div class="deck-viewport" id="deck-viewport" aria-live="polite">
+        <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
+      </div>
+
+      <!-- Nav-pijlen (desktop) -->
+      <div class="deck-nav" aria-hidden="false">
+        <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijllinks.png"       alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
+          </span>
+        </button>
+        <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijlrechts.png"      alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijlrechtsgrijs.png" alt="" aria-hidden="true">
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
 
   </main>
 
