@@ -205,7 +205,7 @@
     <aside class="insp-cards__intro">
       <h2 class="insp-cards__heading">Doe inspiratie op</h2>
 
-      <!-- Zelfde knop-styling als je “Over ons”-knop (about-btn) -->
+      <!-- Desktop/Tablet-knop -->
       <a class="about-btn projects__all" href="/projecten/">
         <span class="about-btn__label">Bekijk alle projecten</span>
         <span class="about-btn__icon">
@@ -213,16 +213,9 @@
           <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
         </span>
       </a>
-    </aside>
 
-    <!-- Deck rechts -->
-    <div class="insp-cards__deck">
-      <div class="deck-viewport" id="deck-viewport" aria-live="polite">
-        <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
-      </div>
-
-      <!-- Nav-pijlen (desktop) -->
-      <div class="deck-nav" aria-hidden="false">
+      <!-- Desktop pijlen: onder de knop, onderaan uitgelijnd -->
+      <div class="deck-nav deck-nav--desktop" aria-hidden="false">
         <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
           <span class="deck-nav__icon">
             <img class="icon-active"   src="../images/pijllinks.png"       alt="" aria-hidden="true">
@@ -236,9 +229,44 @@
           </span>
         </button>
       </div>
+    </aside>
+
+    <!-- Deck rechts -->
+    <div class="insp-cards__deck">
+      <div class="deck-viewport" id="deck-viewport" aria-live="polite">
+        <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
+      </div>
+
+      <!-- Mobile pijlen: gecentreerd onder de cards -->
+      <div class="deck-nav deck-nav--mobile" aria-hidden="false">
+        <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijllinks.png"       alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
+          </span>
+        </button>
+        <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijlrechts.png"      alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijlrechtsgrijs.png" alt="" aria-hidden="true">
+          </span>
+        </button>
+      </div>
+
+      <!-- Mobile-knop (centraal onder de pijlen) -->
+      <a class="about-btn projects__all projects__all--mobile" href="/projecten/">
+        <span class="about-btn__label">Bekijk alle projecten</span>
+        <span class="about-btn__icon">
+          <img class="arrow-yellow" src="../images/pijlgeel.png" alt="" aria-hidden="true" />
+          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+        </span>
+      </a>
     </div>
   </div>
 </section>
+
+
+
 
 
   </main>

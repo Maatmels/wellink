@@ -947,7 +947,8 @@ body {
   --radius: 8px;
 
   font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  color: #111;
+  color: #fff;                         /* default tekstkleur binnen sectie */
+  background: #18263f;                 /* nieuwe achtergrondkleur */
   padding: clamp(20px, 5vw, 48px) 16px;
 }
 .insp-cards__wrap {
@@ -966,41 +967,69 @@ body {
   font-weight: 700;
   font-size: clamp(22px, 3.2vw, 32px);
   line-height: 1.15;
+  color: #fff;                         /* kop wit */
 }
-.projects__all { margin-top: 8px; }
+
+/* Linkerkolom: flex zodat pijlen onderaan kunnen staan */
+.insp-cards__intro {
+  display: flex;
+  flex-direction: column;
+}
+.projects__all { 
+  margin-top: 8px; 
+}
+.deck-nav--desktop {
+  margin-top: auto;                    /* duw pijlen naar onderkant kolom */
+}
+
+/* Knop-styling binnen donker blok */
+.insp-cards .about-btn {
+  border-color: #fff;                  /* witte outline */
+  color: #fff;                         /* knoptekst wit */
+  background: transparent;             /* transparant op donker */
+}
+.insp-cards .about-btn__icon { border-color: #fff; }
+.insp-cards .about-btn:hover,
+.insp-cards .about-btn:focus-visible {
+  background: var(--yellow);           /* geel bij hover/active */
+  border-color: var(--yellow);
+  color: #000;                         /* tekst zwart bij geel */
+}
 
 /* Deck rechts uitlijnen */
-/* Deck moet de volledige kolom opvullen zodat kaarten links starten */
 .insp-cards__deck {
   justify-self: stretch;
   min-width: 0;
   width: 100%;
+  display: grid;
+  grid-template-rows: auto auto auto;  /* viewport, nav (mobile), knop (mobile) */
+  row-gap: 10px;
 }
-
 
 /* Viewport + deck */
 .deck-viewport {
   position: relative;
-  overflow: hidden; /* verberg stapel */
+  overflow: hidden;                  /* verberg stapel */
   width: 100%;
-  min-height: 360px;
+  min-height: 320px;
+  touch-action: pan-y;               /* we handelen horizontale swipe zelf */
+  -webkit-user-select: none; user-select: none;
 }
 .deck-viewport.grab     { cursor: grab;     cursor: -webkit-grab; }
 .deck-viewport.grabbing { cursor: grabbing; cursor: -webkit-grabbing; }
 
 .deck {
   /* Kaartmaten via variabelen; JS leest dit */
-  --card-w: 360px;
-  --card-h: 520px;
-  --card-gap: 18px;
+  --card-w: 320px;
+  --card-h: 380px;                   /* kleiner in hoogte */
+  --card-gap: 16px;
   position: relative;
   height: var(--card-h);
 }
-/* Meer kaarten passen op brede schermen; op mobile wat kleiner */
 @media (max-width: 768px) {
   .deck {
-    --card-w: min(82vw, 320px);
-    --card-h: 480px;
+    --card-w: min(82vw, 290px);
+    --card-h: 340px;                 /* ook lager op mobile */
     --card-gap: 14px;
   }
 }
@@ -1018,37 +1047,51 @@ body {
   grid-template-rows: auto 1fr;
   transition: transform .38s cubic-bezier(.22,.61,.36,1);
   will-change: transform;
+  -webkit-user-drag: none;
+  /* GEEN shadow meer */
 }
 
-/* Boven: afbeelding (alleen image zoomt bij hover/press) */
+/* Boven: afbeelding met rand (niet full-bleed) */
 .card__img {
-  position: relative;
+  padding: 10px;                      /* ruimte rondom image */
+}
+.card__frame {
   aspect-ratio: 16 / 10;
+  width: 100%;
+  border-radius: 6px;                 /* kleine afronding binnen de card */
   overflow: hidden;
   background: #e5e5e5;
 }
-.card__img img {
+.card__frame img {
   width: 100%;
   height: 100%;
-  object-fit: cover;   /* projectfoto’s zijn meestal jpg/cover is mooier */
+  object-fit: cover;
   transform: scale(1);
   transition: transform .28s ease;
+  -webkit-user-drag: none;
 }
-.card:hover .card__img img,
-.card:active .card__img img { transform: scale(1.06); }
+.card:hover .card__frame img,
+.card:active .card__frame img { transform: scale(1.06); }
 
-/* Onder: titel + “Ontdek →” link */
+/* Onder: titel + beschrijving + “Ontdek →” link */
 .card__body {
-  padding: 12px 14px 14px;
+  padding: 8px 14px 14px;
   display: grid;
   align-content: start;
   gap: 8px;
+  color: #111;
 }
 .card__title {
   font-weight: 700;
   font-size: clamp(16px, 2.2vw, 18px);
   line-height: 1.2;
   color: #000;
+}
+.card__desc {
+  margin: 0;
+  color: #444;
+  font-size: clamp(14px, 1.9vw, 15px);
+  line-height: 1.4;
 }
 .card__discover {
   display: inline-flex;
@@ -1067,13 +1110,10 @@ body {
 .card__discover:hover .card__arrow,
 .card__discover:focus-visible .card__arrow { transform: translateX(2px); }
 
-/* Nav-pijlen onder deck (desktop only) */
+/* Pijlen: desktop in linkerkolom; mobile onder de cards */
 .deck-nav {
   display: flex;
-  justify-content: flex-end; /* deck staat rechts, nav ook */
-  align-items: center;
   gap: 16px;
-  margin-top: 10px;
 }
 .deck-nav__btn {
   appearance: none;
@@ -1088,11 +1128,7 @@ body {
   transition: transform .14s ease;
 }
 .deck-nav__btn:active { transform: scale(1.06); }
-
-.deck-nav__icon {
-  position: relative;
-  width: 28px; height: 28px;
-}
+.deck-nav__icon { position: relative; width: 28px; height: 28px; }
 .deck-nav__icon img {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
@@ -1101,13 +1137,30 @@ body {
 }
 .deck-nav__icon .icon-active   { opacity: 1; }
 .deck-nav__icon .icon-disabled { opacity: 0; }
-
-/* disabled: laat grijze variant smooth infaden */
 .deck-nav__btn[aria-disabled="true"] .icon-active   { opacity: 0; }
 .deck-nav__btn[aria-disabled="true"] .icon-disabled { opacity: 1; }
 .deck-nav__btn[aria-disabled="true"] { pointer-events: none; }
 
-/* Verberg nav op mobile; daar swipe je */
+/* Desktop vs Mobile zichtbaarheid/uitlijning */
+.deck-nav--desktop { display: flex; }
+.deck-nav--mobile  { display: none; }
 @media (max-width: 768px) {
-  .deck-nav { display: none; }
+  .deck-nav--desktop { display: none; }
+  .deck-nav--mobile  { 
+    display: flex; 
+    justify-content: center;         /* pijlen centreren onder de cards */
+  }
+}
+
+/* Mobile-knop: echt gecentreerd */
+.projects__all--mobile {
+  display: none;
+}
+@media (max-width: 768px) {
+  .projects__all--mobile {
+    display: inline-flex;
+    justify-self: center;            /* center in grid kolom */
+    align-self: center;
+    margin: 4px auto 0;
+  }
 }

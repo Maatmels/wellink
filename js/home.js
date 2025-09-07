@@ -337,219 +337,161 @@ async function loadGoogleReviewsViaProxy() {
 
 
 
-// ===== Recente projecten (home) via /Recent/recent.json (statisch), met fallback =====
-(function () {
-  const grid = document.getElementById('projects-grid');
-  if (!grid) return;
-
-  function truncateWords(str, max = 8) {
-    const words = String(str || '').trim().split(/\s+/);
-    return words.length <= max ? str : words.slice(0, max).join(' ') + '…';
-  }
-
-  function render(items) {
-    const two = items.slice(0, 2);
-    grid.innerHTML = two.map(item => {
-      const href = '/projecten/';
-      const title = item.title || 'Project';
-      const desc  = truncateWords(item.description || '', 8);
-      const img1  = (item.images && item.images[0]) || '../images/home_afbeelding.jpg';
-      const img2  = (item.images && item.images[1]) || img1;
-
-      return `
-        <li class="proj-card">
-          <a class="proj-link" href="${href}">
-            <figure class="proj-media">
-              <img class="img-primary"   src="${img1}" alt="${title}" loading="lazy">
-              <img class="img-secondary" src="${img2}" alt="${title}" loading="lazy" aria-hidden="true">
-            </figure>
-            <div class="proj-title">${title}</div>
-            <p class="proj-desc">${desc}</p>
-          </a>
-        </li>
-      `;
-    }).join('');
-  }
-
-  function sortNewestFirst(list) {
-    // Als items een 'date' veld hebben → sorteer daarop (nieuwste eerst).
-    // Anders laten we de JSON-volgorde in stand.
-    if (!Array.isArray(list)) return [];
-    if (list.length && list[0].date) {
-      return [...list].sort((a, b) => new Date(b.date) - new Date(a.date));
-    }
-    return list;
-  }
-
-  async function load() {
-    try {
-      const res = await fetch('/Recent/recent.json', { cache: 'no-store' });
-      if (!res.ok) throw new Error('recent.json niet gevonden');
-      const data = await res.json();
-      const sorted = sortNewestFirst(data);
-      render(sorted);
-    } catch {
-      // Fallback als recent.json nog niet bestaat
-      render([
-        {
-          title: 'Renovatie aluminium kozijnen',
-          description: 'Strakke afwerking met hoge isolatiewaarde',
-          images: ['../images/home_afbeelding.jpg', '../images/home_afbeelding2.jpg']
-        },
-        {
-          title: 'Kunststof schuifpui geplaatst',
-          description: 'Vlotte montage en nette afwerking bij tussenwoning',
-          images: ['../images/home_afbeelding2.jpg', '../images/home_afbeelding.jpg']
-        }
-      ]);
-    }
-  }
-
-  load();
-})();
-
-// ===== Project-deck met JSON uit /Recent + arrows (desktop) + swipe (mobile) =====
+// ===== Project-deck met JSON uit /recent/recent.json + desktop & mobile pijlen + swipe (mobile) =====
 (function () {
   const viewport = document.getElementById('deck-viewport');
   const deck     = document.getElementById('deck');
   if (!viewport || !deck) return;
 
-  const prevBtn = document.querySelector('.deck-nav .prev');
-  const nextBtn = document.querySelector('.deck-nav .next');
+  // Twee sets pijlen: desktop (linkerkolom) en mobile (onder deck)
+  const prevBtns = Array.from(document.querySelectorAll('.deck-nav .prev'));
+  const nextBtns = Array.from(document.querySelectorAll('.deck-nav .next'));
 
   const mql = window.matchMedia('(max-width: 768px)');
 
-  // -------- JSON laden uit /Recent ----------
+  // -------- JSON laden uit /recent/recent.json ----------
   const JSON_CANDIDATES = [
-    '/Recent/projects.json',
-    '/Recent/index.json',
-    '../Recent/projects.json',
-    '../Recent/index.json'
+    '../recent/recent.json',
+    '/recent/recent.json'
   ];
 
   async function loadProjects() {
     for (const url of JSON_CANDIDATES) {
       try {
         const res = await fetch(url, { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          if (Array.isArray(data) && data.length) return data;
-        }
+        if (!res.ok) continue;
+        const data = await res.json();
+        if (!Array.isArray(data)) continue;
+
+        // Sorteer op date (nieuwste eerst) en pak de 5 nieuwste
+        const sorted = data
+          .slice()
+          .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
+          .slice(0, 5);
+
+        if (sorted.length) return sorted;
       } catch (_) {}
     }
-    // fallback als er nog geen JSON is
+    // Fallback als er nog geen JSON is
     return [
-      { title: 'Project A', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] },
-      { title: 'Project B', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'] },
-      { title: 'Project C', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] },
-      { title: 'Project D', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'] },
-      { title: 'Project E', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] }
+      { title: 'Project A', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] },
+      { title: 'Project B', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'] },
+      { title: 'Project C', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] },
+      { title: 'Project D', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'] },
+      { title: 'Project E', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] }
     ];
   }
 
-  function num(v) { return parseFloat(String(v).replace('px','')); }
+  function fixPath(p) {
+    if (!p) return '../images/home_afbeelding.jpg';
+    if (/^https?:\/\//i.test(p) || p.startsWith('/')) return p;
+    // JSON gebruikt "images/…"; home staat in submap ⇒ '../' prefixen
+    return '../' + p.replace(/^\.?\//, '');
+  }
+
+  // helpers voor sizing + truncation
+  const num = (v, d=0) => {
+    const n = parseFloat(String(v).replace('px',''));
+    return Number.isFinite(n) ? n : d;
+  };
   function getSizes() {
     const cs = getComputedStyle(deck);
     return {
-      w: num(cs.getPropertyValue('--card-w')),
-      h: num(cs.getPropertyValue('--card-h')),
-      gap: num(cs.getPropertyValue('--card-gap')),
-      vpw: viewport.clientWidth
+      w:   num(cs.getPropertyValue('--card-w'), 290),
+      h:   num(cs.getPropertyValue('--card-h'), 340),
+      gap: num(cs.getPropertyValue('--card-gap'), 14),
     };
   }
+  const truncateChars = (s='', max=30) => {
+    const str = String(s);
+    return str.length <= max ? str : str.slice(0, max) + '...';
+  };
 
   let cards = [];
   let index = 0;     // eerste zichtbare
-  let visible = 2;   // wordt dynamisch bepaald
 
-  function computeVisible() {
-  // Desktop/Tablet: dynamisch aantal dat past; Mobile: altijd 1 kaart
-  if (mql.matches) return 1;
-  const { w, gap, vpw } = getSizes();
-  return Math.max(1, Math.min(5, Math.floor((vpw + gap) / (w + gap))));
-}
+  function visibleCount() {
+    // Desktop/Tablet: dynamisch aantal dat past; Mobile: 1 (voor pijl-disabling)
+    if (mql.matches) return 1;
+    const { w, gap } = getSizes();
+    const vpw = viewport.clientWidth || 1;
+    return Math.max(1, Math.min(5, Math.floor((vpw + gap) / (w + gap))));
+  }
 
-function applyTransforms() {
-  const { w, h, gap, vpw } = getSizes();
-  deck.style.height = h + 'px';
+  // UNIFORME AFSTANDEN: elke kaart rechts staat exact (i-index)*(w+gap) verder.
+  // Linker "stapel" schuift een beetje onder de eerste kaart.
+  function applyTransforms() {
+    const { w, h, gap } = getSizes();
+    deck.style.height = h + 'px';
 
-  // Mobile: 1 kaart, gecentreerd. Desktop: links uitlijnen.
-  const isMobile = mql.matches;
-  visible = computeVisible();
+    const baseOffset = 0; // links starten (ook op mobile)
 
-  // Groepsbreedte voor desktop (info); op mobile gebruiken we w.
-  const groupWidth = visible * w + (visible - 1) * gap;
+    cards.forEach((card, i) => {
+      const rel = i - index; // 0 = eerste in beeld; 1 = tweede; <0 = links "onder" de stapel
+      let x = 0, z = 100 + i, scale = 1, rot = 0;
 
-  // Basis-offset:
-  // - Desktop: links starten (0)
-  // - Mobile: eerste kaart netjes centreren
-  const baseOffset = isMobile ? Math.max(0, (vpw - w) / 2) : 0;
+      if (rel < 0) {
+        // links (onder de stapel) — subtiel onder de stapel schuiven
+        x = baseOffset - Math.min(36, (index - i) * 4);
+        scale = 0.985;
+        rot = -0.35;
+        z = 60 + i;
+      } else {
+        // in beeld en rechts daarvan: vaste, gelijke afstanden
+        x = baseOffset + rel * (w + gap);
+      }
 
-  cards.forEach((card, i) => {
-    const rel = i - index; // 0..visible-1 = in beeld; <0 = links/onder; >=visible = rechts buiten
-    let x = 0, z = 100 + i, scale = 1, rot = 0;
+      card.style.transform = `translateX(${x}px) rotate(${rot}deg) scale(${scale})`;
+      card.style.zIndex = z;
+    });
 
-    if (rel < 0) {
-      // links (onder de stapel) — subtiel onder de stapel schuiven
-      x = baseOffset - Math.min(36, (index - i) * 4);
-      scale = 0.985;
-      rot = -0.35;
-      z = 60 + i;
-    } else if (rel >= 0 && rel < visible) {
-      // in beeld
-      x = baseOffset + rel * (w + gap);
-      scale = 1;
-      rot = 0;
-    } else {
-      // rechts buiten beeld
-      x = baseOffset + (visible * (w + gap)) + 60;
-      z = 100 + i;
-    }
+    updateArrows();
+  }
 
-    card.style.transform = `translateX(${x}px) rotate(${rot}deg) scale(${scale})`;
-    card.style.zIndex = z;
-  });
-
-  updateArrows();
-}
-
+  function setDisabled(elList, disabled) {
+    elList.forEach(el => el?.setAttribute('aria-disabled', disabled ? 'true' : 'false'));
+  }
 
   function updateArrows() {
-    if (!prevBtn || !nextBtn) return;
-    const maxIndex = Math.max(0, cards.length - visible);
-
-    const atStart = index <= 0;
-    const atEnd   = index >= maxIndex;
-
-    prevBtn.setAttribute('aria-disabled', atStart ? 'true' : 'false');
-    nextBtn.setAttribute('aria-disabled', atEnd   ? 'true' : 'false');
+    const maxIndex = Math.max(0, cards.length - visibleCount());
+    setDisabled(prevBtns, index <= 0);
+    setDisabled(nextBtns, index >= maxIndex);
   }
 
   function centerTo(i) {
-    const maxIndex = Math.max(0, cards.length - visible);
+    const maxIndex = Math.max(0, cards.length - visibleCount());
     index = Math.max(0, Math.min(maxIndex, i));
     applyTransforms();
   }
 
+  function escapeHTML(s) {
+    return String(s ?? '').replace(/[&<>"']/g, m => (
+      { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]
+    ));
+  }
+
   function renderDeck(projects) {
     deck.innerHTML = '';
-    const five = ensureFive(projects);
     const frag = document.createDocumentFragment();
 
-    five.forEach((proj, i) => {
+    projects.forEach((proj) => {
       const li = document.createElement('li');
       li.className = 'card';
 
-      // hoofdfoto + altfoto voor hover (als aanwezig)
-      const main = (proj.images && proj.images[0]) || '../images/home_afbeelding.jpg';
-      const alt  = (proj.images && proj.images[1]) || null;
+      const main = fixPath(proj.images?.[0]);
+      const alt  = proj.images?.[1] ? fixPath(proj.images[1]) : null;
+      const title = escapeHTML(proj.title || 'Project');
+      const desc  = escapeHTML(truncateChars(proj.description || '', 30));
 
       li.innerHTML = `
         <div class="card__img">
-          <img src="${main}" alt="${escapeHTML(proj.title || 'Project')}" data-main="${main}" ${alt ? `data-alt="${alt}"` : ''}/>
+          <div class="card__frame">
+            <img src="${main}" alt="${title}" data-main="${main}" ${alt ? `data-alt="${alt}"` : ''}/>
+          </div>
         </div>
         <div class="card__body">
-          <div class="card__title">${escapeHTML(proj.title || 'Project')}</div>
+          <div class="card__title">${title}</div>
+          <p class="card__desc">${desc}</p>
           <a class="card__discover" href="/projecten/">
             Ontdek
             <img class="card__arrow" src="../images/pijlgeel.png" alt="" aria-hidden="true" />
@@ -557,9 +499,9 @@ function applyTransforms() {
         </div>
       `;
 
-      // hover: wissel naar alt (alleen desktop is hover bruikbaar)
+      // hover-swap alleen desktop (hover bestaat niet op mobile)
       const img = li.querySelector('img');
-      if (alt) {
+      if (alt && !mql.matches) {
         li.addEventListener('mouseenter', () => { img.src = alt; }, { passive: true });
         li.addEventListener('mouseleave', () => { img.src = main; }, { passive: true });
       }
@@ -577,31 +519,12 @@ function applyTransforms() {
     cards = Array.from(deck.querySelectorAll('.card'));
   }
 
-  function ensureFive(arr) {
-    const out = arr.slice(0, 5);
-    while (out.length < 5 && arr.length) {
-      out.push(arr[out.length % arr.length]);
-    }
-    // als arr leeg is (kan bijna niet), vul placeholders
-    while (out.length < 5) {
-      out.push({ title: 'Project', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] });
-    }
-    return out;
-  }
-
-  function escapeHTML(s) {
-    return String(s).replace(/[&<>"']/g, m => (
-      { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]
-    ));
-  }
-
-  // --- Swipe (alleen mobile) ---
-  let dragging = false, startX = 0, lastX = 0, moved = 0;
+  // --- Swipe (mobile) ---
+  let dragging = false, startX = 0, lastX = 0;
 
   function onDown(e) {
     if (!mql.matches) return; // alleen mobile
     dragging = true;
-    moved = 0;
     startX = (e.touches ? e.touches[0].clientX : e.clientX);
     lastX = startX;
     viewport.classList.add('grabbing');
@@ -609,44 +532,43 @@ function applyTransforms() {
   function onMove(e) {
     if (!dragging) return;
     const x = (e.touches ? e.touches[0].clientX : e.clientX);
-    const dx = x - lastX;
-    moved += Math.abs(dx);
     lastX = x;
-    e.preventDefault();
+    e.preventDefault(); // we handelen swipe zelf af
   }
   function onUp() {
     if (!dragging) return;
     dragging = false;
     viewport.classList.remove('grabbing');
 
-    const dxTotal = lastX - startX;
+    const dx = lastX - startX;
     const threshold = 50;
 
-    const maxIndex = Math.max(0, cards.length - visible);
-    if (dxTotal < -threshold && index < maxIndex) {
+    if (dx < -threshold) {
       centerTo(index + 1);
-    } else if (dxTotal > threshold && index > 0) {
+    } else if (dx > threshold) {
       centerTo(index - 1);
     } else {
       applyTransforms(); // snap terug
     }
   }
 
+  // Touch + (optioneel) pointer voor dev-test
   viewport.addEventListener('touchstart', onDown, { passive: true });
   window.addEventListener('touchmove', onMove, { passive: false });
   window.addEventListener('touchend', onUp);
+  viewport.addEventListener('pointerdown', (e) => { if (mql.matches) onDown(e); });
+  window.addEventListener('pointermove',  (e) => { if (mql.matches) onMove(e); });
+  window.addEventListener('pointerup',    ()  => { if (mql.matches) onUp(); });
 
-  // --- Arrows (desktop) ---
-  prevBtn?.addEventListener('click', () => centerTo(index - 1));
-  nextBtn?.addEventListener('click', () => centerTo(index + 1));
+  // --- Pijl-klikhandlers voor beide sets ---
+  prevBtns.forEach(btn => btn?.addEventListener('click', () => centerTo(index - 1)));
+  nextBtns.forEach(btn => btn?.addEventListener('click', () => centerTo(index + 1)));
 
   // --- Init ---
   (async () => {
     const projects = await loadProjects();
     renderDeck(projects);
-    // startpositie: meest linkse zichtbare = 0
-    // (groep staat rechts in viewport dankzij baseOffset-berekening)
-    centerTo(0);
+    centerTo(0); // start links
   })();
 
   // responsive
