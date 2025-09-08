@@ -1383,6 +1383,18 @@ body {
     bottom: -22%;
     transform: translateX(-50%);
   }
+  @media (max-width: 860px){
+    /* Zet content uitgelijnd naar BOVEN en geef extra top-padding */
+    .finder-hero__content{
+      place-content: start center;   /* verticaal naar boven, horizontaal centreren */
+      align-items: start;
+      padding-top: clamp(48px, 16vw, 140px);  /* schuif headline omhoog */
+    }
+  
+    /* optioneel: mini tweak als er nog overlap is, duw de kaart iets lager */
+    /* .finder__card{ bottom: -24%; } */
+  }
+  
 }
 
 /* ====== Desktop: headline links, kaart rechts ====== */
