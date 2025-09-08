@@ -4,34 +4,39 @@
     "description": "Strakke afwerking met hoge isolatiewaarde voor een moderne uitstraling.",
     "images": ["images/testproject2.jpeg",
                "images/testproject2.1.jpeg"],
-    "date": "2025-09-01"
+    "date": "2025-09-01",
+    "features": ["test1","test2"]
   },
   {
     "title": "Kunststof schuifpui geplaatst",
     "description": "Vlotte montage en nette afwerking bij tussenwoning met tuinzijde.",
     "images": ["images/testproject1.jpeg",
                "images/testproject1.1.jpeg"],
-    "date": "2025-08-27"
+    "date": "2025-08-27",
+    "features": ["test1","test2"]
   },
   {
     "title": "Kunststof schuifpui geplaatst",
     "description": "Vlotte montage en nette afwerking bij tussenwoning met tuinzijde.",
     "images": ["images/testproject1.jpeg",
                "images/testproject1.1.jpeg"],
-    "date": "2025-08-27"
+    "date": "2025-08-27",
+    "features": ["test1","test2"]
   },
   {
     "title": "Kunststof schuifpui geplaatst",
     "description": "Vlotte montage en nette afwerking bij tussenwoning met tuinzijde.",
     "images": ["images/testproject1.jpeg",
                "images/testproject1.1.jpeg"],
-    "date": "2025-08-27"
+    "date": "2025-08-27",
+    "features": ["test1","test2"]
   },
   {
     "title": "Kunststof schuifpui geplaatst",
     "description": "Vlotte montage en nette afwerking bij tussenwoning met tuinzijde.",
     "images": ["images/testproject1.jpeg",
                "images/testproject1.1.jpeg"],
-    "date": "2025-08-27"
+    "date": "2025-08-27",
+    "features": ["test1","test2"]
   }
 ]

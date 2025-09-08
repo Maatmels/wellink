@@ -5,19 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Home</title>
 
+  <!-- Preloads -->
   <link rel="preload" as="image" href="../images/home_afbeelding.jpg" />
+
+  <!-- Styles -->
   <link rel="stylesheet" href="../css/home.css" />
   <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+
+  <!-- Sticky footer baseline (optioneel: verplaats naar je CSS) -->
+  <style>
+    html, body { height: 100%; }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    main { flex: 1; }
+  </style>
 </head>
 <body>
-<!-- Page Loader -->
-<div id="page-loader" class="page-loader" aria-live="polite" aria-busy="true">
-  <img class="page-loader__logo" src="../images/logo_zwart.PNG" alt="Logo" />
-</div>
+  <!-- Page Loader -->
+  <div id="page-loader" class="page-loader" aria-live="polite" aria-busy="true">
+    <img class="page-loader__logo" src="../images/logo_zwart.PNG" alt="Logo" />
+  </div>
 
-
-
-
+  <!-- HEADER mount BOVEN main -->
   <div id="header-root" data-include="../partials/header.html"></div>
 
   <main id="page-content">
@@ -58,221 +71,320 @@
         </li>
       </ul>
     </section>
-<!-- INSPIRATIE -->
-<section class="inspiration" aria-label="Inspiratie">
-    <div class="inspiration__wrap">
-      <h2 class="inspiration__title">Inspiratie</h2>
-  
-      <div class="inspiration__track">
-        <!-- 1 -->
-        <a class="cat-card" href="/contact/">
-          <div class="cat-card__media">
-            <img src="../images/schuifpui.png" alt="Kunststof schuifpuien" />
-          </div>
-          <div class="cat-card__text">
-            <span class="cat-card__title">
-              <span class="cat-card__title-default">Kunststof schuifpuien</span>
-              <span class="cat-card__title-hover" aria-hidden="true">Offerte aanvragen</span>
-            </span>
-            <span class="cat-card__desc">Tijdelijke tekst met vijf woorden.</span>
-          </div>
-        </a>
-  
-        <!-- 2 -->
-        <a class="cat-card" href="/contact/">
-          <div class="cat-card__media">
-            <img src="../images/deur.png" alt="Kunststof deuren" />
-          </div>
-          <div class="cat-card__text">
-            <span class="cat-card__title">
-              <span class="cat-card__title-default">Kunststof deuren</span>
-              <span class="cat-card__title-hover" aria-hidden="true">Offerte aanvragen</span>
-            </span>
-            <span class="cat-card__desc">Tijdelijke tekst met vijf woorden.</span>
-          </div>
-        </a>
-  
-        <!-- 3 -->
-        <a class="cat-card" href="/contact/">
-          <div class="cat-card__media">
-            <img src="../images/kozijn.png" alt="Kunststof kozijnen" />
-          </div>
-          <div class="cat-card__text">
-            <span class="cat-card__title">
-              <span class="cat-card__title-default">Kunststof kozijnen</span>
-              <span class="cat-card__title-hover" aria-hidden="true">Offerte aanvragen</span>
-            </span>
-            <span class="cat-card__desc">Tijdelijke tekst met vijf woorden.</span>
-          </div>
-        </a>
+
+    <!-- INSPIRATIE -->
+    <section class="inspiration" aria-label="Inspiratie">
+      <div class="inspiration__wrap">
+        <h2 class="inspiration__title">Inspiratie</h2>
+
+        <div class="inspiration__track">
+          <!-- 1 -->
+          <a class="cat-card" href="/contact/">
+            <div class="cat-card__media">
+              <img src="../images/schuifpui.png" alt="Kunststof schuifpuien" />
+            </div>
+            <div class="cat-card__text">
+              <span class="cat-card__title">
+                <span class="cat-card__title-default">Kunststof schuifpuien</span>
+                <span class="cat-card__title-hover" aria-hidden="true">Offerte aanvragen</span>
+              </span>
+              <span class="cat-card__desc">Tijdelijke tekst met vijf woorden.</span>
+            </div>
+          </a>
+
+          <!-- 2 -->
+          <a class="cat-card" href="/contact/">
+            <div class="cat-card__media">
+              <img src="../images/deur.png" alt="Kunststof deuren" />
+            </div>
+            <div class="cat-card__text">
+              <span class="cat-card__title">
+                <span class="cat-card__title-default">Kunststof deuren</span>
+                <span class="cat-card__title-hover" aria-hidden="true">Offerte aanvragen</span>
+              </span>
+              <span class="cat-card__desc">Tijdelijke tekst met vijf woorden.</span>
+            </div>
+          </a>
+
+          <!-- 3 -->
+          <a class="cat-card" href="/contact/">
+            <div class="cat-card__media">
+              <img src="../images/kozijn.png" alt="Kunststof kozijnen" />
+            </div>
+            <div class="cat-card__text">
+              <span class="cat-card__title">
+                <span class="cat-card__title-default">Kunststof kozijnen</span>
+                <span class="cat-card__title-hover" aria-hidden="true">Offerte aanvragen</span>
+              </span>
+              <span class="cat-card__desc">Tijdelijke tekst met vijf woorden.</span>
+            </div>
+          </a>
+        </div>
+
+        <!-- Alleen op mobile zichtbaar: nav pijltjes -->
+        <div class="inspiration__nav" aria-hidden="false">
+          <button class="insp-nav__btn prev" type="button" aria-label="Scroll links" aria-disabled="false">
+            <img
+              class="insp-nav__img"
+              src="../images/pijllinks.PNG"
+              alt=""
+              aria-hidden="true"
+              data-src-active="../images/pijllinks.PNG"
+              data-src-disabled="../images/pijllinksgrijs.PNG"
+            />
+          </button>
+          <button class="insp-nav__btn next" type="button" aria-label="Scroll rechts" aria-disabled="false">
+            <img
+              class="insp-nav__img"
+              src="../images/pijlrechts.PNG"
+              alt=""
+              aria-hidden="true"
+              data-src-active="../images/pijlrechts.PNG"
+              data-src-disabled="../images/pijlrechtsgrijs.PNG"
+            />
+          </button>
+        </div>
       </div>
-  
-      <!-- Alleen op mobile zichtbaar: nav pijltjes -->
-      <div class="inspiration__nav" aria-hidden="false">
-        <button class="insp-nav__btn prev" type="button" aria-label="Scroll links" aria-disabled="false">
-          <img
-            class="insp-nav__img"
-            src="../images/pijllinks.PNG"
-            alt=""
-            aria-hidden="true"
-            data-src-active="../images/pijllinks.PNG"
-            data-src-disabled="../images/pijllinksgrijs.PNG"
-          />
-        </button>
-        <button class="insp-nav__btn next" type="button" aria-label="Scroll rechts" aria-disabled="false">
-          <img
-            class="insp-nav__img"
-            src="../images/pijlrechts.PNG"
-            alt=""
-            aria-hidden="true"
-            data-src-active="../images/pijlrechts.PNG"
-            data-src-disabled="../images/pijlrechtsgrijs.PNG"
-          />
-        </button>
-      </div>
-    </div>
-  </section>
-  
-<section class="about" aria-label="Over ons">
-  <div class="about-layout">
-    <!-- LINKS op desktop, ONDER op mobile -->
-    <aside class="about-media">
-      <figure class="about-photo-stack">
-        <img class="photo-large" src="../images/home_afbeelding.jpg" alt="Projectimpressie 1" />
-        <img class="photo-small" src="../images/home_afbeelding2.jpg" alt="Projectimpressie 2" />
-      </figure>
-    </aside>
+    </section>
 
-    <!-- RECHTS: header + kaart -->
-    <div class="about-pane">
-      <header class="about-header">
-        <span class="about-kicker">Over ons</span>
-        <h2 class="about-title">Wellink Bouw en Kozijn techniek</h2>
-        <p class="about-intro">
-          Tijdelijke tekst: wij leveren moderne kozijnoplossingen met oog voor detail.
-          Heldere communicatie en een strak proces—zodat je precies krijgt wat je verwacht.
-        </p>
-      </header>
+    <section class="about" aria-label="Over ons">
+      <div class="about-layout">
+        <!-- LINKS op desktop, ONDER op mobile -->
+        <aside class="about-media">
+          <figure class="about-photo-stack">
+            <img class="photo-large" src="../images/home_afbeelding.jpg" alt="Projectimpressie 1" />
+            <img class="photo-small" src="../images/home_afbeelding2.jpg" alt="Projectimpressie 2" />
+          </figure>
+        </aside>
 
-      <div class="about-card" id="about-card">
-        <div class="about-content">
-          <p class="about-two-lines">
-            Tijdelijke tekst: vakmanschap en nette oplevering staan centraal.
-            We denken mee, adviseren eerlijk en houden de lijnen kort.
-          </p>
+        <!-- RECHTS: header + kaart -->
+        <div class="about-pane">
+          <header class="about-header">
+            <span class="about-kicker">Over ons</span>
+            <h2 class="about-title">Wellink Bouw en Kozijn techniek</h2>
+            <p class="about-intro">
+              Tijdelijke tekst: wij leveren moderne kozijnoplossingen met oog voor detail.
+              Heldere communicatie en een strak proces—zodat je precies krijgt wat je verwacht.
+            </p>
+          </header>
 
-          <div class="about-meta">
-            <img class="about-avatar" src="../images/wellink.jpeg" alt="Marc Wellink" />
-            <div class="about-id">
-              <strong class="about-name">Marc Wellink</strong>
-              <span class="about-role">Eigenaar</span>
+          <div class="about-card" id="about-card">
+            <div class="about-content">
+              <p class="about-two-lines">
+                Tijdelijke tekst: vakmanschap en nette oplevering staan centraal.
+                We denken mee, adviseren eerlijk en houden de lijnen kort.
+              </p>
+
+              <div class="about-meta">
+                <img class="about-avatar" src="../images/wellink.jpeg" alt="Marc Wellink" />
+                <div class="about-id">
+                  <strong class="about-name">Marc Wellink</strong>
+                  <span class="about-role">Eigenaar</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quote rechtsonder -->
+            <div class="about-quote" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 78" width="136" height="78">
+                <path d="M31.2815 77.2607H0L24.9613 0.260742H75L31.2815 77.2607Z" fill="white"/>
+                <path d="M92.2815 77.2607H61L85.9613 0.260742H136L92.2815 77.2607Z" fill="white"/>
+              </svg>
             </div>
           </div>
+
+          <!-- KNOP NU HIERONDER (buiten de about-card) -->
+          <a class="about-btn" href="/over-ons" aria-label="Meer over ons">
+            <span class="about-btn__label">Meer over ons</span>
+            <span class="about-btn__icon" aria-hidden="true">
+              <img class="arrow-yellow" src="../images/pijlgeel.png" alt="" />
+              <img class="arrow-white"  src="../images/pijlwit.png"  alt="" />
+            </span>
+          </a>
         </div>
+      </div>
+    </section>
 
-        <!-- Quote rechtsonder -->
-        <div class="about-quote" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 136 78" width="136" height="78">
-            <path d="M31.2815 77.2607H0L24.9613 0.260742H75L31.2815 77.2607Z" fill="white"/>
-            <path d="M92.2815 77.2607H61L85.9613 0.260742H136L92.2815 77.2607Z" fill="white"/>
-          </svg>
+    <!-- REVIEWS -->
+    <section class="reviews" aria-label="Klantreviews">
+      <div class="reviews__viewport">
+        <ul class="reviews__row" id="reviews-row" aria-live="off"></ul>
+      </div>
+    </section>
+
+    <!-- INSPIRATIE DECK (PROJECTEN) -->
+    <section class="insp-cards" aria-label="Project inspiratie">
+      <div class="insp-cards__wrap">
+        <!-- Links (desktop) / Boven (mobile) -->
+        <aside class="insp-cards__intro">
+          <h2 class="insp-cards__heading">Doe inspiratie op</h2>
+
+          <!-- Desktop/Tablet-knop (verborgen op mobile) -->
+          <a class="about-btn projects__all" href="/projecten/">
+            <span class="about-btn__label">Bekijk alle projecten</span>
+            <span class="about-btn__icon">
+              <img class="arrow-yellow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
+              <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+            </span>
+          </a>
+
+          <!-- Desktop pijlen -->
+          <div class="deck-nav deck-nav--desktop" aria-hidden="false">
+            <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
+              <span class="deck-nav__icon">
+                <img class="icon-active"   src="../images/pijllinkswit.png"       alt="" aria-hidden="true">
+                <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
+              </span>
+            </button>
+            <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
+              <span class="deck-nav__icon">
+                <img class="icon-active"   src="../images/pijlrechtswit.png"      alt="" aria-hidden="true">
+                <img class="icon-disabled" src="../images/pijlrechtsgrijs.png"  alt="" aria-hidden="true">
+              </span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- Deck rechts -->
+        <div class="insp-cards__deck">
+          <div class="deck-viewport" id="deck-viewport" aria-live="polite">
+            <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
+          </div>
+
+          <!-- Mobile pijlen -->
+          <div class="deck-nav deck-nav--mobile" aria-hidden="false">
+            <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
+              <span class="deck-nav__icon">
+                <img class="icon-active"   src="../images/pijllinkswit.png"       alt="" aria-hidden="true">
+                <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
+              </span>
+            </button>
+            <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
+              <span class="deck-nav__icon">
+                <img class="icon-active"   src="../images/pijlrechtswit.png"      alt="" aria-hidden="true">
+                <img class="icon-disabled" src="../images/pijlrechtsgrijs.png"  alt="" aria-hidden="true">
+              </span>
+            </button>
+          </div>
+
+          <!-- Mobile-knop -->
+          <a class="about-btn projects__all projects__all--mobile" href="/projecten/">
+            <span class="about-btn__label">Bekijk alle projecten</span>
+            <span class="about-btn__icon">
+              <img class="arrow-yellow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
+              <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+            </span>
+          </a>
         </div>
       </div>
+    </section>
 
-      <!-- KNOP NU HIERONDER (buiten de about-card) -->
-      <a class="about-btn" href="/over-ons" aria-label="Meer over ons">
-        <span class="about-btn__label">Meer over ons</span>
-        <span class="about-btn__icon" aria-hidden="true">
-          <img class="arrow-yellow" src="../images/pijlgeel.png" alt="" />
-          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" />
-        </span>
-      </a>
-    </div>
-  </div>
-</section>
+    <!-- FAQ -->
+    <section class="faq" aria-label="Veelgestelde vragen">
+      <div class="faq__wrap">
+        <h2 class="faq__title">FAQ</h2>
 
-<!-- REVIEWS -->
-<section class="reviews" aria-label="Klantreviews">
-  <div class="reviews__viewport">
-    <ul class="reviews__row" id="reviews-row" aria-live="off"></ul>
-  </div>
-</section>
+        <div class="faq__list" id="faq-list">
+          <!-- 1 -->
+          <article class="faq-item">
+            <h3 class="faq-q">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-1" id="faq-label-1">
+                <span class="faq-q__text">Hoe lang is de gemiddelde levertijd?</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="faq-a" id="faq-1" role="region" aria-labelledby="faq-label-1">
+              <div class="faq-a__inner">
+                De standaard levertijd ligt meestal tussen 4 en 8 weken, afhankelijk van materiaalkeuze en planning.
+              </div>
+            </div>
+          </article>
 
-<!-- INSPIRATIE DECK (PROJECTEN) -->
-<section class="insp-cards" aria-label="Project inspiratie">
-  <div class="insp-cards__wrap">
-    <!-- Links (desktop) / Boven (mobile) -->
-    <aside class="insp-cards__intro">
-      <h2 class="insp-cards__heading">Doe inspiratie op</h2>
+          <!-- 2 -->
+          <article class="faq-item">
+            <h3 class="faq-q">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-2" id="faq-label-2">
+                <span class="faq-q__text">Doen jullie ook montage op locatie?</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="faq-a" id="faq-2" role="region" aria-labelledby="faq-label-2">
+              <div class="faq-a__inner">
+                Ja. Onze eigen monteurs verzorgen de plaatsing en oplevering. We stemmen vooraf alles met je af.
+              </div>
+            </div>
+          </article>
 
-      <!-- Desktop/Tablet-knop -->
-      <a class="about-btn projects__all" href="/projecten/">
-        <span class="about-btn__label">Bekijk alle projecten</span>
-        <span class="about-btn__icon">
-          <img class="arrow-yellow" src="../images/pijlgeel.png" alt="" aria-hidden="true" />
-          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
-        </span>
-      </a>
+          <!-- 3 -->
+          <article class="faq-item">
+            <h3 class="faq-q">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-3" id="faq-label-3">
+                <span class="faq-q__text">Krijg ik garantie op kozijnen en plaatsing?</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="faq-a" id="faq-3" role="region" aria-labelledby="faq-label-3">
+              <div class="faq-a__inner">
+                Zeker. Op materiaal en montage geldt garantie volgens onze voorwaarden en de fabrikant.
+              </div>
+            </div>
+          </article>
 
-      <!-- Desktop pijlen: onder de knop, onderaan uitgelijnd -->
-      <div class="deck-nav deck-nav--desktop" aria-hidden="false">
-        <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
-          <span class="deck-nav__icon">
-            <img class="icon-active"   src="../images/pijllinks.png"       alt="" aria-hidden="true">
-            <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
-          </span>
-        </button>
-        <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
-          <span class="deck-nav__icon">
-            <img class="icon-active"   src="../images/pijlrechts.png"      alt="" aria-hidden="true">
-            <img class="icon-disabled" src="../images/pijlrechtsgrijs.png" alt="" aria-hidden="true">
-          </span>
-        </button>
+          <!-- 4 -->
+          <article class="faq-item">
+            <h3 class="faq-q">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-4" id="faq-label-4">
+                <span class="faq-q__text">Kunnen jullie ook helpen met ontwerp en advies?</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="faq-a" id="faq-4" role="region" aria-labelledby="faq-label-4">
+              <div class="faq-a__inner">
+                We denken mee over stijl, maatvoering en isolatiewaarden, en adviseren eerlijk wat bij je woning past.
+              </div>
+            </div>
+          </article>
+
+          <!-- 5 -->
+          <article class="faq-item">
+            <h3 class="faq-q">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-5" id="faq-label-5">
+                <span class="faq-q__text">Werken jullie ook in het weekend?</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="faq-a" id="faq-5" role="region" aria-labelledby="faq-label-5">
+              <div class="faq-a__inner">
+                Montage is normaal doordeweeks. In overleg zijn uitzonderingen soms mogelijk.
+              </div>
+            </div>
+          </article>
+
+          <!-- 6 -->
+          <article class="faq-item">
+            <h3 class="faq-q">
+              <button class="faq-toggle" aria-expanded="false" aria-controls="faq-6" id="faq-label-6">
+                <span class="faq-q__text">Hoe vraag ik een offerte aan?</span>
+                <span class="faq-icon" aria-hidden="true"></span>
+              </button>
+            </h3>
+            <div class="faq-a" id="faq-6" role="region" aria-labelledby="faq-label-6">
+              <div class="faq-a__inner">
+                Via het contactformulier. Voeg foto’s/tekeningen toe voor een snelle en scherpe inschatting.
+              </div>
+            </div>
+          </article>
+        </div>
       </div>
-    </aside>
-
-    <!-- Deck rechts -->
-    <div class="insp-cards__deck">
-      <div class="deck-viewport" id="deck-viewport" aria-live="polite">
-        <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
-      </div>
-
-      <!-- Mobile pijlen: gecentreerd onder de cards -->
-      <div class="deck-nav deck-nav--mobile" aria-hidden="false">
-        <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
-          <span class="deck-nav__icon">
-            <img class="icon-active"   src="../images/pijllinks.png"       alt="" aria-hidden="true">
-            <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
-          </span>
-        </button>
-        <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
-          <span class="deck-nav__icon">
-            <img class="icon-active"   src="../images/pijlrechts.png"      alt="" aria-hidden="true">
-            <img class="icon-disabled" src="../images/pijlrechtsgrijs.png" alt="" aria-hidden="true">
-          </span>
-        </button>
-      </div>
-
-      <!-- Mobile-knop (centraal onder de pijlen) -->
-      <a class="about-btn projects__all projects__all--mobile" href="/projecten/">
-        <span class="about-btn__label">Bekijk alle projecten</span>
-        <span class="about-btn__icon">
-          <img class="arrow-yellow" src="../images/pijlgeel.png" alt="" aria-hidden="true" />
-          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
-        </span>
-      </a>
-    </div>
-  </div>
-</section>
-
-
-
-
-
+    </section>
   </main>
 
+  <!-- FOOTER mount ONDER main (blijf hier laten staan) -->
+  <div id="footer-root" data-include="../partials/footer.html"></div>
+
+  <!-- Scripts -->
   <script defer src="../js/home.js"></script>
   <script defer src="../js/header.js"></script>
-
+  <script defer src="../js/footer.js"></script>
 </body>
 </html>

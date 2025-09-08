@@ -174,7 +174,7 @@ body {
 /* USP Banner */
 .usp-banner {
   position: relative;
-  background: #e5e5e5;            
+  background: #f7f7f7;            
   color: #18263f;                 
   font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 28px);
@@ -193,11 +193,11 @@ body {
 }
 .usp-banner::before {
   left: 0;
-  background: linear-gradient(to right, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+  background: linear-gradient(to right, #f7f7f7 0%, rgba(229,229,229,0) 100%);
 }
 .usp-banner::after {
   right: 0;
-  background: linear-gradient(to left, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+  background: linear-gradient(to left, #f7f7f7 0%, rgba(229,229,229,0) 100%);
 }
 
 .usp-list {
@@ -268,7 +268,7 @@ body {
 /* ===== USP Banner ===== */
 .usp-banner {
   position: relative;
-  background: #e5e5e5;
+  background: #f7f7f7;
   color: #18263f;
   font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   padding: clamp(14px, 3vw, 22px) clamp(16px, 4vw, 28px);
@@ -287,11 +287,11 @@ body {
 }
 .usp-banner::before {
   left: 0;
-  background: linear-gradient(to right, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+  background: linear-gradient(to right, #f7f7f7 0%, rgba(229,229,229,0) 100%);
 }
 .usp-banner::after {
   right: 0;
-  background: linear-gradient(to left, #e5e5e5 0%, rgba(229,229,229,0) 100%);
+  background: linear-gradient(to left, #f7f7f7 0%, rgba(229,229,229,0) 100%);
 }
 
 /* één rij, gecentreerd, vaste dichte afstand; nooit wrap */
@@ -398,7 +398,7 @@ body {
   background: #fff;
 }
 .cat-card__media {
-  background: #e5e5e5;
+  background: #f7f7f7;
   aspect-ratio: 16 / 9;
   display: grid;
   place-items: center;
@@ -942,99 +942,86 @@ body {
 
 /* ===== Inspiratie deck (projecten) ===== */
 .insp-cards {
-  --yellow: #ffcd0a;
+  --yellow: #18263f;
   --card-bg: #f7f7f7;
-  --radius: 8px;
+  --radius: 10px;
 
   font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  color: #fff;                         /* default tekstkleur binnen sectie */
-  background: #18263f;                 /* nieuwe achtergrondkleur */
-  padding: clamp(20px, 5vw, 48px) 16px;
+  color: #fff;
+  background: #18263f;
+  padding: clamp(24px, 5vw, 56px) 16px;
+  overflow-x: hidden;
 }
+
+/* Volle breedte overall */
+.insp-cards__wrap { max-width: none; }
 .insp-cards__wrap {
-  max-width: 1360px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  gap: clamp(18px, 4vw, 56px);
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 28px);
 }
 @media (max-width: 768px) {
   .insp-cards__wrap { grid-template-columns: 1fr; }
 }
 
 .insp-cards__heading {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-weight: 700;
-  font-size: clamp(22px, 3.2vw, 32px);
+  font-size: clamp(26px, 3.2vw, 36px);
   line-height: 1.15;
-  color: #fff;                         /* kop wit */
+  color: #fff;
 }
 
-/* Linkerkolom: flex zodat pijlen onderaan kunnen staan */
-.insp-cards__intro {
-  display: flex;
-  flex-direction: column;
-}
-.projects__all { 
-  margin-top: 8px; 
-}
-.deck-nav--desktop {
-  margin-top: auto;                    /* duw pijlen naar onderkant kolom */
-}
+/* Linkerkolom + knoppen */
+.insp-cards__intro { display: flex; flex-direction: column; will-change: transform; }
+.projects__all { margin-top: 10px; }
 
-/* Knop-styling binnen donker blok */
-.insp-cards .about-btn {
-  border-color: #fff;                  /* witte outline */
-  color: #fff;                         /* knoptekst wit */
-  background: transparent;             /* transparant op donker */
-}
+/* Knop: hover/press = WIT */
+.insp-cards .about-btn { border-color: #fff; color: #fff; background: transparent; }
 .insp-cards .about-btn__icon { border-color: #fff; }
 .insp-cards .about-btn:hover,
-.insp-cards .about-btn:focus-visible {
-  background: var(--yellow);           /* geel bij hover/active */
-  border-color: var(--yellow);
-  color: #000;                         /* tekst zwart bij geel */
+.insp-cards .about-btn:focus-visible,
+.insp-cards .about-btn:active {
+  background: #fff;
+  border-color: #fff;
+  color: #000;
 }
 
-/* Deck rechts uitlijnen */
+@media (max-width: 768px) {
+  .insp-cards__intro .projects__all { display: none !important; }
+}
+
 .insp-cards__deck {
   justify-self: stretch;
   min-width: 0;
   width: 100%;
   display: grid;
-  grid-template-rows: auto auto auto;  /* viewport, nav (mobile), knop (mobile) */
-  row-gap: 10px;
+  grid-template-rows: auto auto auto;
+  row-gap: 12px;
+  position: relative;
 }
 
 /* Viewport + deck */
 .deck-viewport {
   position: relative;
-  overflow: hidden;                  /* verberg stapel */
+  overflow: hidden;
   width: 100%;
-  min-height: 320px;
-  touch-action: pan-y;               /* we handelen horizontale swipe zelf */
+  min-height: 0;
+  padding: 0;
+  touch-action: pan-y;
   -webkit-user-select: none; user-select: none;
 }
 .deck-viewport.grab     { cursor: grab;     cursor: -webkit-grab; }
 .deck-viewport.grabbing { cursor: grabbing; cursor: -webkit-grabbing; }
 
-.deck {
-  /* Kaartmaten via variabelen; JS leest dit */
-  --card-w: 320px;
-  --card-h: 380px;                   /* kleiner in hoogte */
-  --card-gap: 16px;
-  position: relative;
-  height: var(--card-h);
-}
-@media (max-width: 768px) {
-  .deck {
-    --card-w: min(82vw, 290px);
-    --card-h: 340px;                 /* ook lager op mobile */
-    --card-gap: 14px;
-  }
-}
+/* Custom cursor: verberg systeemcursor binnen viewport */
+.deck-viewport.use-custom-cursor,
+.deck-viewport.use-custom-cursor * { cursor: none !important; }
 
-/* Kaarten (absolute, JS positioneert) */
+/* Kaarten */
+.deck { --card-w: 420px; --card-h: 560px; --card-gap: 16px; position: relative; height: var(--card-h); }
+
 .card {
   position: absolute;
   top: 0;
@@ -1045,122 +1032,278 @@ body {
   overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr;
-  transition: transform .38s cubic-bezier(.22,.61,.36,1);
+  transition: transform .40s cubic-bezier(.22,.61,.36,1);
   will-change: transform;
   -webkit-user-drag: none;
-  /* GEEN shadow meer */
 }
 
-/* Boven: afbeelding met rand (niet full-bleed) */
-.card__img {
-  padding: 10px;                      /* ruimte rondom image */
-}
+/* Boven: afbeelding (niet sleepbaar) */
+.card__img { padding: 14px 16px 10px; }
 .card__frame {
   aspect-ratio: 16 / 10;
   width: 100%;
-  border-radius: 6px;                 /* kleine afronding binnen de card */
+  border-radius: 8px;
   overflow: hidden;
   background: #e5e5e5;
 }
 .card__frame img {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
   transform: scale(1);
-  transition: transform .28s ease;
+  transition: transform .22s ease;
   -webkit-user-drag: none;
+  user-drag: none;
+  user-select: none;
+  pointer-events: none; /* voorkomt “image drag” tijdens swipen */
 }
 .card:hover .card__frame img,
-.card:active .card__frame img { transform: scale(1.06); }
+.card:active .card__frame img { transform: scale(1.03); }
 
-/* Onder: titel + beschrijving + “Ontdek →” link */
+/* Onder: content + CTA */
 .card__body {
-  padding: 8px 14px 14px;
+  padding: 14px 16px 16px;
   display: grid;
-  align-content: start;
-  gap: 8px;
+  grid-template-rows: auto auto auto 1fr auto;
+  align-content: stretch;
+  gap: 12px;
   color: #111;
 }
-.card__title {
-  font-weight: 700;
-  font-size: clamp(16px, 2.2vw, 18px);
-  line-height: 1.2;
-  color: #000;
-}
-.card__desc {
-  margin: 0;
-  color: #444;
-  font-size: clamp(14px, 1.9vw, 15px);
-  line-height: 1.4;
-}
-.card__discover {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--yellow);
-  text-decoration: none;
-  font-weight: 500;
-}
-.card__discover .card__arrow {
-  width: 16px; height: 16px;
-  display: inline-block;
-  transform: translateZ(0);
-  transition: transform .22s ease;
-}
-.card__discover:hover .card__arrow,
-.card__discover:focus-visible .card__arrow { transform: translateX(2px); }
+.card__features { display: flex; flex-wrap: wrap; gap: 8px; }
+.feat-tag { background:#18263f; color:#fff; border-radius:8px; padding:6px 10px; font-size:14px; line-height:1; white-space:nowrap; }
+.card__title { font-weight: 800; font-size: 26px; line-height: 1.22; color: #000; }
+.card__desc  { margin: 0; color: #333; font-size: 17px; line-height: 1.45; }
+.card__date  { margin: 0; color: #666; font-size: 14px; line-height: 1.3; }
 
-/* Pijlen: desktop in linkerkolom; mobile onder de cards */
-.deck-nav {
-  display: flex;
-  gap: 16px;
+/* CTA linksonder — pijl nu BLAUW via mask */
+.card__discover {
+  align-self: end; justify-self: start;
+  position: relative;
+  display: inline-flex; align-items: center; gap: 10px;
+  color: var(--yellow); text-decoration: none; font-weight: 700; font-size: 18px;
+  padding-right: 26px; /* ruimte voor pseudo-pijl */
 }
+.card__discover .card__arrow { display: none; } /* img verbergen */
+.card__discover::after{
+  content:"";
+  position:absolute; right:0; top:50%;
+  width:18px; height:18px;
+  transform: translateY(-50%);
+  transition: transform .18s ease;
+  background: #18263f; /* blauw */
+  -webkit-mask: url('../images/pijlwit.png') no-repeat center / contain;
+  mask: url('../images/pijlwit.png') no-repeat center / contain;
+}
+.card__discover:hover::after,
+.card__discover:focus-visible::after { transform: translate(2px,-50%); }
+
+/* Pijlen */
+.deck-nav { display: flex; gap: 16px; }
 .deck-nav__btn {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
-  cursor: pointer;
-  transition: transform .14s ease;
+  appearance: none; border: 0; background: transparent; padding: 4px;
+  display: inline-flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent; cursor: pointer; transition: transform .14s ease;
 }
 .deck-nav__btn:active { transform: scale(1.06); }
-.deck-nav__icon { position: relative; width: 28px; height: 28px; }
-.deck-nav__icon img {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: contain;
-  transition: opacity .18s ease;
-}
+.deck-nav__icon { position: relative; width: 32px; height: 32px; }
+.deck-nav__icon img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .18s ease; }
 .deck-nav__icon .icon-active   { opacity: 1; }
 .deck-nav__icon .icon-disabled { opacity: 0; }
 .deck-nav__btn[aria-disabled="true"] .icon-active   { opacity: 0; }
 .deck-nav__btn[aria-disabled="true"] .icon-disabled { opacity: 1; }
 .deck-nav__btn[aria-disabled="true"] { pointer-events: none; }
 
-/* Desktop vs Mobile zichtbaarheid/uitlijning */
+/* Desktop vs Mobile */
 .deck-nav--desktop { display: flex; }
 .deck-nav--mobile  { display: none; }
 @media (max-width: 768px) {
   .deck-nav--desktop { display: none; }
-  .deck-nav--mobile  { 
-    display: flex; 
-    justify-content: center;         /* pijlen centreren onder de cards */
+  .deck-nav--mobile  { display: flex; justify-content: center; }
+}
+
+/* Mobile-knop gecentreerd */
+.projects__all--mobile { display: none; }
+@media (max-width: 768px) {
+  .projects__all--mobile { display: inline-flex !important; justify-self: center; align-self: center; margin: 2px auto 0; }
+}
+
+/* ---------- DESKTOP: intro naar rechts + knop/pijlen centreren ---------- */
+@media (min-width: 769px) {
+  .insp-cards__intro {
+    transform: translateX(clamp(160px, 16vw, 400px));
+    align-items: center;
+    text-align: center;
+  }
+  .insp-cards__wrap  { column-gap: clamp(128px, 14vw, 440px); }
+  .deck-nav--desktop {
+    justify-content: center;
+    margin-top: 410px;   /* MEER ruimte tussen knop en pijlen */
   }
 }
 
-/* Mobile-knop: echt gecentreerd */
-.projects__all--mobile {
-  display: none;
-}
+/* ---------- MOBILE full-bleed ---------- */
 @media (max-width: 768px) {
-  .projects__all--mobile {
-    display: inline-flex;
-    justify-self: center;            /* center in grid kolom */
-    align-self: center;
-    margin: 4px auto 0;
+  .insp-cards, .insp-cards__deck { overflow-x: hidden; }
+  .insp-cards__deck {
+    width: 100vw; width: 100dvw;
+    margin-left: calc(50% - 50dvw);
+    margin-right: calc(50% - 50dvw);
   }
+  .deck-viewport {
+    --mobile-left-gutter: 2px;
+    --mobile-right-gutter: 8px;
+    padding-left: var(--mobile-left-gutter);
+    padding-right: var(--mobile-right-gutter);
+  }
+}
+
+/* Overlap-shadow bij desktop nudge (bestond al) */
+.card.is-overlap { box-shadow: 0 10px 24px rgba(0,0,0,.16); }
+
+/* Custom drag cursor (bestond al) */
+.drag-cursor {
+  position: fixed; left: 0; top: 0;
+  width: 64px; height: 64px; border-radius: 50%;
+  border: 1px solid #000; background: #000; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none; z-index: 99999;
+  --cx: 1; --cy: 1; --visScale: 0;
+  transform: translate(-50%, -50%) scale(var(--visScale)) scaleX(var(--cx)) scaleY(var(--cy));
+  transition: transform .22s ease;
+}
+.drag-cursor.is-visible { --visScale: 1; }
+.drag-cursor svg { width: 30px; height: 30px; display: block; transform: scale(0.86); }
+@media (max-width: 768px) { .drag-cursor { display: none !important; } }
+
+@media (min-width: 769px) {
+  .insp-cards__deck { margin-left: 40px; } /* optioneel, bovenop column-gap */
+}
+
+
+
+/* ===== FAQ ===== */
+.faq {
+  background: #fff;
+  color: #111;
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  padding: clamp(24px, 6vw, 56px) 16px;
+  /* Tweaks die je makkelijk kunt finetunen */
+  --faq-item-width: 720px;  /* iets minder breed dan de wrap */
+  --faq-gap: 18px;          /* iets méér ruimte tussen vragen */
+}
+
+.faq__wrap {
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+}
+
+.faq__title {
+  margin: 0 0 clamp(14px, 3vw, 20px);
+  text-align: center;
+  font-weight: 700;
+  font-size: clamp(26px, 3.2vw, 36px);
+  line-height: 1.15;
+  color: #111;
+}
+
+/* Lijst: geen grid-gap meer; we sturen spacing zelf */
+.faq__list {
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+/* Elk item smaller en gecentreerd binnen de wrap */
+.faq-item {
+  max-width: var(--faq-item-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Enige afstand tussen opeenvolgende vragen */
+.faq-item + .faq-item {
+  margin-top: var(--faq-gap);
+}
+
+/* Vraagbalk */
+.faq-q { margin: 0; }
+
+.faq-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  /* IETS hoger dan eerst (heel subtiel) */
+  padding: 18px clamp(14px, 2vw, 18px);
+
+  background: #f7f7f7;            /* grijs (dicht) */
+  color: #111;
+  border: none;
+  border-radius: 8px;              /* afgeronde balk */
+  cursor: pointer;
+  text-align: left;
+  transition: background-color .22s ease;
+  font-size: 18px;
+  font-weight: 400;                /* niet vet */
+}
+
+.faq-item.is-open .faq-toggle {
+  background: #ffcd0a;            /* geel (open) */
+  color: #111;
+}
+
+/* Plus → min icoon (smooth) */
+.faq-icon {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.faq-icon::before,
+.faq-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 18px; height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  transform-origin: 50% 50%;
+  transition: transform .18s ease, opacity .18s ease;
+}
+.faq-icon::before { transform: rotate(0deg); }
+.faq-icon::after  { transform: rotate(90deg); }
+.faq-item.is-open .faq-icon::after { transform: rotate(90deg) scaleX(0); opacity: 0; }
+
+/* Antwoord-paneel: geen lijn wanneer dicht */
+.faq-a {
+  overflow: hidden;
+  max-height: 0;                    /* JS animeert deze waarde */
+  background: #fff;
+  transition: max-height .28s cubic-bezier(.22,.61,.36,1);
+  will-change: max-height;
+  border: none;                     /* geen lijn in dichte staat */
+  border-radius: 0 0 8px 8px;       /* voorbereid op open staat */
+}
+
+/* Alleen wanneer open: omranding tonen (zonder extra scheidslijn) */
+.faq-item.is-open .faq-a {
+  border: 1px solid #eee;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.faq-a__inner {
+  padding: 14px clamp(14px, 2vw, 18px) 16px;
+  color: #333;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+/* Subtiele hoverkleur (geen auto open) */
+@media (hover: hover) and (pointer: fine) {
+  .faq-toggle:hover { background: #f7f7f7; }
+  .faq-item.is-open .faq-toggle:hover { background: #ffcd0a; }
 }

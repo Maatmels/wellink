@@ -337,24 +337,30 @@ async function loadGoogleReviewsViaProxy() {
 
 
 
-// ===== Project-deck met JSON uit /recent/recent.json + desktop & mobile pijlen + swipe (mobile) =====
+// ===== Cards met features + datum; behoudt alle bestaande interacties =====
 (function () {
   const viewport = document.getElementById('deck-viewport');
   const deck     = document.getElementById('deck');
   if (!viewport || !deck) return;
 
-  // Twee sets pijlen: desktop (linkerkolom) en mobile (onder deck)
   const prevBtns = Array.from(document.querySelectorAll('.deck-nav .prev'));
   const nextBtns = Array.from(document.querySelectorAll('.deck-nav .next'));
-
   const mql = window.matchMedia('(max-width: 768px)');
 
-  // -------- JSON laden uit /recent/recent.json ----------
+  const DRAG_SPEED   = 1.5;
+  const ELASTIC_MAX  = 160;
+  const ELASTIC_GAIN_DESKTOP = 0.35;
+  const ELASTIC_GAIN_MOBILE  = 0.55;
+  const BOUNCE_MS    = 360;
+  const NUDGE_THRESHOLD_RESET = 8;
+
+  // ---------- Data ----------
   const JSON_CANDIDATES = [
     '../recent/recent.json',
-    '/recent/recent.json'
+    '/recent/recent.json',
+    '../Recent/recent.json',
+    '/Recent/recent.json'
   ];
-
   async function loadProjects() {
     for (const url of JSON_CANDIDATES) {
       try {
@@ -362,218 +368,379 @@ async function loadGoogleReviewsViaProxy() {
         if (!res.ok) continue;
         const data = await res.json();
         if (!Array.isArray(data)) continue;
-
-        // Sorteer op date (nieuwste eerst) en pak de 5 nieuwste
-        const sorted = data
-          .slice()
-          .sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0))
-          .slice(0, 5);
-
+        const sorted = data.slice().sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
         if (sorted.length) return sorted;
-      } catch (_) {}
+      } catch(_) {}
     }
-    // Fallback als er nog geen JSON is
     return [
-      { title: 'Project A', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] },
-      { title: 'Project B', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'] },
-      { title: 'Project C', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] },
-      { title: 'Project D', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'] },
-      { title: 'Project E', description: 'Voorbeeldtekst', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'] }
+      { title: 'Project A', description: 'Voorbeeld', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'], date:'2025-01-01', features:['voorbeeld'] },
+      { title: 'Project B', description: 'Voorbeeld', images: ['../images/home_afbeelding2.jpg','../images/home_afbeelding.jpg'], date:'2025-01-02', features:['voorbeeld'] },
+      { title: 'Project C', description: 'Voorbeeld', images: ['../images/home_afbeelding.jpg','../images/home_afbeelding2.jpg'], date:'2025-01-03', features:['voorbeeld'] }
     ];
   }
 
-  function fixPath(p) {
-    if (!p) return '../images/home_afbeelding.jpg';
-    if (/^https?:\/\//i.test(p) || p.startsWith('/')) return p;
-    // JSON gebruikt "images/…"; home staat in submap ⇒ '../' prefixen
-    return '../' + p.replace(/^\.?\//, '');
+  const num = (v,d=0)=>{ const n=parseFloat(String(v).replace('px','')); return Number.isFinite(n)?n:d; };
+  function getSizes(){
+    const cs=getComputedStyle(deck); const vpw=viewport.clientWidth||1;
+    return { w:num(cs.getPropertyValue('--card-w'),420),
+             h:num(cs.getPropertyValue('--card-h'),560),
+             gap:num(cs.getPropertyValue('--card-gap'),16),
+             vpw };
+  }
+  const truncateChars=(s='',m=30)=>String(s).length<=m?String(s):String(s).slice(0,m)+'...';
+  const fixPath=(p)=>!p?'../images/home_afbeelding.jpg':(/^https?:\/\//i.test(p)||p.startsWith('/'))?p:('../'+String(p).replace(/^\.?\//,''));
+  const escapeHTML=(s)=>String(s??'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+
+  // NL datum formatter
+  function formatDateISO(iso){
+    if (!iso) return '';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    const maanden = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+    return `${d.getDate()} ${maanden[d.getMonth()]} ${d.getFullYear()}`;
   }
 
-  // helpers voor sizing + truncation
-  const num = (v, d=0) => {
-    const n = parseFloat(String(v).replace('px',''));
-    return Number.isFinite(n) ? n : d;
-  };
-  function getSizes() {
-    const cs = getComputedStyle(deck);
-    return {
-      w:   num(cs.getPropertyValue('--card-w'), 290),
-      h:   num(cs.getPropertyValue('--card-h'), 340),
-      gap: num(cs.getPropertyValue('--card-gap'), 14),
-    };
+  let cards=[], scrollX=0, maxScroll=0, endNudge=0;
+
+  function visibleCount(){ if(mql.matches) return 1; const {w,gap,vpw}=getSizes(); return Math.max(1, Math.floor((vpw+gap+1e-6)/(w+gap))); }
+  function recomputeMaxScroll(){
+    const {w,gap}=getSizes();
+    const totalW = cards.length*(w+gap)-gap;
+    const vis    = visibleCount();
+    const groupW = vis*(w+gap)-gap;
+    maxScroll = Math.max(0, totalW - groupW);
+    scrollX = Math.max(0, Math.min(scrollX, maxScroll));
   }
-  const truncateChars = (s='', max=30) => {
-    const str = String(s);
-    return str.length <= max ? str : str.slice(0, max) + '...';
-  };
+  const atStart=()=>scrollX<=0.5 && endNudge===0;
+  const atEnd  =()=>scrollX>=(maxScroll-0.5);
 
-  let cards = [];
-  let index = 0;     // eerste zichtbare
-
-  function visibleCount() {
-    // Desktop/Tablet: dynamisch aantal dat past; Mobile: 1 (voor pijl-disabling)
-    if (mql.matches) return 1;
-    const { w, gap } = getSizes();
-    const vpw = viewport.clientWidth || 1;
-    return Math.max(1, Math.min(5, Math.floor((vpw + gap) / (w + gap))));
+  function updateArrows(){
+    const canNudge = atEnd() && endNudge===0 && !mql.matches;
+    const disablePrev = atStart();
+    const disableNext = atEnd() ? !canNudge : false;
+    prevBtns.forEach(b=>b?.setAttribute('aria-disabled', disablePrev?'true':'false'));
+    nextBtns.forEach(b=>b?.setAttribute('aria-disabled', disableNext?'true':'false'));
   }
 
-  // UNIFORME AFSTANDEN: elke kaart rechts staat exact (i-index)*(w+gap) verder.
-  // Linker "stapel" schuift een beetje onder de eerste kaart.
-  function applyTransforms() {
-    const { w, h, gap } = getSizes();
-    deck.style.height = h + 'px';
+  function clearOverlapClass(){ cards.forEach(c=>c.classList.remove('is-overlap')); }
 
-    const baseOffset = 0; // links starten (ook op mobile)
+  function applyTransforms(){
+    const {w,h,gap,vpw}=getSizes();
+    deck.style.height = h+'px';
+    const vis      = visibleCount();
+    const groupW   = vis*(w+gap)-gap;
+    let baseOffset;
+    if (mql.matches){
+      const gv=getComputedStyle(viewport).getPropertyValue('--mobile-left-gutter').trim();
+      baseOffset = parseFloat(gv)||0;
+    } else {
+      const spare = vpw - groupW;
+      baseOffset = spare>=0 ? 0 : Math.floor(spare);
+    }
 
-    cards.forEach((card, i) => {
-      const rel = i - index; // 0 = eerste in beeld; 1 = tweede; <0 = links "onder" de stapel
-      let x = 0, z = 100 + i, scale = 1, rot = 0;
+    const nudgeActive = atEnd() && endNudge===1 && !mql.matches;
+    const NUDGE_SHIFT = 12, OVERLAP=18, SHRINK=0.97;
 
-      if (rel < 0) {
-        // links (onder de stapel) — subtiel onder de stapel schuiven
-        x = baseOffset - Math.min(36, (index - i) * 4);
-        scale = 0.985;
-        rot = -0.35;
-        z = 60 + i;
-      } else {
-        // in beeld en rechts daarvan: vaste, gelijke afstanden
-        x = baseOffset + rel * (w + gap);
+    const step=(w+gap);
+    const idxFloat=scrollX/step;
+    const baseIndex=Math.round(idxFloat);
+    if (nudgeActive) baseOffset -= NUDGE_SHIFT;
+
+    clearOverlapClass();
+
+    cards.forEach((card,i)=>{
+      const rel = i - idxFloat;
+      let x = baseOffset + rel*step;
+      let z = 100+i, scale=1, rot=0;
+
+      if (rel<0){
+        const under = Math.min(42,(idxFloat-i)*6);
+        x = Math.max(0, baseOffset-under);
+        scale=0.985; rot=-0.35; z=60+i;
       }
 
-      card.style.transform = `translateX(${x}px) rotate(${rot}deg) scale(${scale})`;
+      if (nudgeActive){
+        if (i===baseIndex) { scale = SHRINK; }
+        if (i===baseIndex+1){ x-=OVERLAP; z+=40; card.classList.add('is-overlap'); }
+        const lastVisibleIdx = baseIndex + vis - 1;
+        if (vis>=3 && i===lastVisibleIdx){ x-=OVERLAP; }
+      }
+
+      card.style.transform = `translate3d(${Math.floor(x)}px,0,0) rotate(${rot}deg) scale(${scale})`;
       card.style.zIndex = z;
     });
 
     updateArrows();
   }
 
-  function setDisabled(elList, disabled) {
-    elList.forEach(el => el?.setAttribute('aria-disabled', disabled ? 'true' : 'false'));
-  }
-
-  function updateArrows() {
-    const maxIndex = Math.max(0, cards.length - visibleCount());
-    setDisabled(prevBtns, index <= 0);
-    setDisabled(nextBtns, index >= maxIndex);
-  }
-
-  function centerTo(i) {
-    const maxIndex = Math.max(0, cards.length - visibleCount());
-    index = Math.max(0, Math.min(maxIndex, i));
+  function stepBy(delta){
+    const {w,gap}=getSizes(), step=(w+gap)*delta;
+    scrollX = Math.max(0, Math.min(scrollX+step, maxScroll));
+    endNudge = 0;
     applyTransforms();
   }
 
-  function escapeHTML(s) {
-    return String(s ?? '').replace(/[&<>"']/g, m => (
-      { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[m]
-    ));
-  }
+  function renderDeck(projects){
+    deck.innerHTML=''; const frag=document.createDocumentFragment();
 
-  function renderDeck(projects) {
-    deck.innerHTML = '';
-    const frag = document.createDocumentFragment();
+    projects.forEach((p)=>{
+      const li=document.createElement('li'); li.className='card';
 
-    projects.forEach((proj) => {
-      const li = document.createElement('li');
-      li.className = 'card';
+      const main=fixPath(p.images?.[0]), alt=p.images?.[1]?fixPath(p.images[1]):null;
+      const title=escapeHTML(p.title||'Project');
+      const desc =escapeHTML(truncateChars(p.description||'',30));
+      const date=formatDateISO(p.date);
+      const features=Array.isArray(p.features)?p.features.slice(0,6):[];
 
-      const main = fixPath(proj.images?.[0]);
-      const alt  = proj.images?.[1] ? fixPath(proj.images[1]) : null;
-      const title = escapeHTML(proj.title || 'Project');
-      const desc  = escapeHTML(truncateChars(proj.description || '', 30));
+      const featsHTML = features.map(f=>`<span class="feat-tag">${escapeHTML(String(f))}</span>`).join('');
 
-      li.innerHTML = `
-        <div class="card__img">
-          <div class="card__frame">
-            <img src="${main}" alt="${title}" data-main="${main}" ${alt ? `data-alt="${alt}"` : ''}/>
-          </div>
-        </div>
-        <div class="card__body">
-          <div class="card__title">${title}</div>
-          <p class="card__desc">${desc}</p>
-          <a class="card__discover" href="/projecten/">
-            Ontdek
-            <img class="card__arrow" src="../images/pijlgeel.png" alt="" aria-hidden="true" />
-          </a>
-        </div>
-      `;
+      li.innerHTML=`
+  <div class="card__img">
+    <div class="card__frame">
+      <img src="${main}" alt="${title}" draggable="false" data-main="${main}" ${alt?`data-alt="${alt}"`:''}/>
+    </div>
+  </div>
+  <div class="card__body">
+    <div class="card__features">${featsHTML}</div>
+    <div class="card__title">${title}</div>
+    <div>
+      <p class="card__desc">${desc}</p>
+      ${date ? `<p class="card__date">${date}</p>` : ``}
+    </div>
+    <span></span>
+    <a class="card__discover" href="/projecten/">
+      Ontdek <img class="card__arrow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
+    </a>
+  </div>`;
 
-      // hover-swap alleen desktop (hover bestaat niet op mobile)
-      const img = li.querySelector('img');
-      if (alt && !mql.matches) {
-        li.addEventListener('mouseenter', () => { img.src = alt; }, { passive: true });
-        li.addEventListener('mouseleave', () => { img.src = main; }, { passive: true });
-      }
+      const img=li.querySelector('img');
+      li.addEventListener('mouseenter',()=>{ if(alt && !mql.matches) img.src=alt; },{passive:true});
+      li.addEventListener('mouseleave',()=>{ if(alt && !mql.matches) img.src=main; },{passive:true});
 
-      // klik overal → projecten
-      li.addEventListener('click', (e) => {
-        const a = e.target.closest('a');
-        if (!a) window.location.href = '/projecten/';
+      // hele kaart klikbaar (met drag-suppress)
+      li.addEventListener('click',(e)=>{
+        if (suppressClick) { e.preventDefault(); return; }
+        const a=e.target.closest('a');
+        if (!a) window.location.href='/projecten/';
       });
 
       frag.appendChild(li);
     });
 
     deck.appendChild(frag);
-    cards = Array.from(deck.querySelectorAll('.card'));
+    cards=Array.from(deck.querySelectorAll('.card'));
+    recomputeMaxScroll(); scrollX=0; endNudge=0;
+    requestAnimationFrame(()=>{ applyTransforms(); requestAnimationFrame(applyTransforms); });
   }
 
-  // --- Swipe (mobile) ---
-  let dragging = false, startX = 0, lastX = 0;
+  // ---------- Anim helpers ----------
+  let animFrame=null;
+  const easeOutCubic=t=>1-Math.pow(1-t,3);
+  function animateTo(target, ms=BOUNCE_MS){
+    cancelAnimationFrame(animFrame);
+    const start=performance.now(), from=scrollX, dist=target-from;
+    animFrame=requestAnimationFrame(function step(now){
+      const t=Math.min(1,(now-start)/ms);
+      scrollX = from + easeOutCubic(t)*dist;
+      applyTransforms();
+      if(t<1) animFrame=requestAnimationFrame(step);
+    });
+  }
+  function elasticProject(proposed, step){
+    const EXTRA=Math.min(ELASTIC_MAX, step*0.9);
+    const GAIN = mql.matches ? ELASTIC_GAIN_MOBILE : ELASTIC_GAIN_DESKTOP;
+    if (proposed<0){
+      const over=Math.min(EXTRA,-proposed); return -over*GAIN;
+    }
+    if (proposed>maxScroll){
+      const over=Math.min(EXTRA, proposed-maxScroll); return maxScroll + over*GAIN;
+    }
+    return proposed;
+  }
 
-  function onDown(e) {
-    if (!mql.matches) return; // alleen mobile
-    dragging = true;
-    startX = (e.touches ? e.touches[0].clientX : e.clientX);
-    lastX = startX;
+  // ---------- Drag/swipe + click-suppress ----------
+  let dragging=false, startX=0, startScrollX=0, wasDragging=false;
+  let wasNudgedAtDragStart=0;
+  let suppressClick=false;
+
+  function beginDrag(clientX){
+    dragging=true; wasDragging=false;
+    startX=clientX; startScrollX=scrollX;
+    wasNudgedAtDragStart=endNudge;
     viewport.classList.add('grabbing');
   }
-  function onMove(e) {
-    if (!dragging) return;
-    const x = (e.touches ? e.touches[0].clientX : e.clientX);
-    lastX = x;
-    e.preventDefault(); // we handelen swipe zelf af
+  function continueDrag(clientX){
+    if(!dragging) return;
+    const {w,gap}=getSizes(), step=(w+gap);
+    const dx=(clientX-startX)*DRAG_SPEED;
+    if (Math.abs(dx)>4){ wasDragging=true; suppressClick=true; }
+    const proposed = startScrollX - dx;
+    scrollX = elasticProject(proposed, step);
+    if (scrollX <= (maxScroll - NUDGE_THRESHOLD_RESET)) endNudge=0;
+    if (!mql.matches && wasNudgedAtDragStart===1 && scrollX>(maxScroll-NUDGE_THRESHOLD_RESET)) endNudge=1;
+    applyTransforms();
   }
-  function onUp() {
-    if (!dragging) return;
-    dragging = false;
-    viewport.classList.remove('grabbing');
+  function endDrag(){
+    if(!dragging) return;
+    dragging=false; viewport.classList.remove('grabbing');
 
-    const dx = lastX - startX;
-    const threshold = 50;
+    if (scrollX<0){ animateTo(0); }
+    else if (scrollX>maxScroll){ if(!mql.matches) endNudge=1; animateTo(maxScroll); }
+    else { if(!mql.matches && wasNudgedAtDragStart===1 && scrollX>(maxScroll-NUDGE_THRESHOLD_RESET)) endNudge=1; applyTransforms(); }
 
-    if (dx < -threshold) {
-      centerTo(index + 1);
-    } else if (dx > threshold) {
-      centerTo(index - 1);
-    } else {
-      applyTransforms(); // snap terug
+    setTimeout(()=>{ suppressClick=false; }, 180);
+  }
+
+  // blokkeer click bubbels vlak na drag
+  viewport.addEventListener('click', (e)=>{ if(suppressClick){ e.preventDefault(); e.stopPropagation(); } }, true);
+
+  // Touch
+  viewport.addEventListener('touchstart',(e)=>beginDrag(e.touches[0].clientX),{passive:true});
+  window.addEventListener('touchmove',(e)=>{ if(dragging){ continueDrag(e.touches[0].clientX); e.preventDefault(); }},{passive:false});
+  window.addEventListener('touchend', endDrag);
+
+  // ---------- Desktop mouse drag + CUSTOM CURSOR ----------
+  const dragCursor=document.createElement('div');
+  dragCursor.className='drag-cursor';
+  dragCursor.innerHTML=`
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M9 6l-5 6 5 6V6zm6 0v12l5-6-5-6z" fill="currentColor"/>
+    </svg>`;
+  document.body.appendChild(dragCursor);
+
+  let lastMoveT=0, lastX=0, vx=0;
+  function showCursor(){
+    if(mql.matches) return;
+    dragCursor.classList.add('is-visible');
+    viewport.classList.add('use-custom-cursor');
+  }
+  function hideCursor(){
+    dragCursor.classList.remove('is-visible');
+    viewport.classList.remove('use-custom-cursor');
+    dragCursor.style.setProperty('--cx','1');
+    dragCursor.style.setProperty('--cy','1');
+  }
+  function moveCursor(e){
+    if(mql.matches) return;
+    dragCursor.style.left = e.clientX+'px';
+    dragCursor.style.top  = e.clientY+'px';
+
+    // Subtiele squash
+    const now=performance.now();
+    if(lastMoveT){
+      const dt=Math.max(1, now-lastMoveT);
+      const dx=e.clientX-lastX;
+      vx = dx/dt;
+      const speed=Math.min(1, Math.abs(vx)/1.2);
+      const STRENGTH=0.12;
+      const cx = 1 + speed*STRENGTH;
+      const cy = Math.max(0.92, 1 - speed*STRENGTH);
+      dragCursor.style.setProperty('--cx', cx.toFixed(3));
+      dragCursor.style.setProperty('--cy', cy.toFixed(3));
     }
+    lastMoveT=now; lastX=e.clientX;
   }
 
-  // Touch + (optioneel) pointer voor dev-test
-  viewport.addEventListener('touchstart', onDown, { passive: true });
-  window.addEventListener('touchmove', onMove, { passive: false });
-  window.addEventListener('touchend', onUp);
-  viewport.addEventListener('pointerdown', (e) => { if (mql.matches) onDown(e); });
-  window.addEventListener('pointermove',  (e) => { if (mql.matches) onMove(e); });
-  window.addEventListener('pointerup',    ()  => { if (mql.matches) onUp(); });
+  viewport.addEventListener('mouseenter', showCursor);
+  viewport.addEventListener('mouseleave', ()=>{ hideCursor(); if(dragging) endDrag(); });
+  viewport.addEventListener('mousemove', moveCursor);
 
-  // --- Pijl-klikhandlers voor beide sets ---
-  prevBtns.forEach(btn => btn?.addEventListener('click', () => centerTo(index - 1)));
-  nextBtns.forEach(btn => btn?.addEventListener('click', () => centerTo(index + 1)));
+  viewport.addEventListener('mousedown',(e)=>{ if(e.button!==0||mql.matches) return; beginDrag(e.clientX); });
+  window.addEventListener('mousemove',(e)=>{ if(dragging && !mql.matches){ continueDrag(e.clientX); moveCursor(e); } });
+  window.addEventListener('mouseup', ()=>{ if(!mql.matches) endDrag(); });
 
-  // --- Init ---
-  (async () => {
-    const projects = await loadProjects();
-    renderDeck(projects);
-    centerTo(0); // start links
-  })();
+  // ---------- Pijlen ----------
+  prevBtns.forEach(btn=>btn?.addEventListener('click',()=>{
+    if(endNudge===1 && !mql.matches){ endNudge=0; applyTransforms(); }
+    else stepBy(-1);
+  }));
+  nextBtns.forEach(btn=>btn?.addEventListener('click',()=>{
+    if(scrollX<maxScroll-0.5) stepBy(1);
+    else if(endNudge===0 && !mql.matches){ endNudge=1; applyTransforms(); }
+  }));
 
-  // responsive
-  const onResize = () => applyTransforms();
+  // ---------- Init ----------
+  (async()=>{ renderDeck(await loadProjects()); })();
+
+  // Responsief
+  const onResize=()=>{ recomputeMaxScroll(); applyTransforms(); };
   if (mql.addEventListener) mql.addEventListener('change', onResize);
   else mql.addListener(onResize);
   window.addEventListener('resize', onResize);
 })();
+
+
+
+
+(() => {
+  const list = document.getElementById('faq-list');
+  if (!list) return;
+
+  const items   = Array.from(list.querySelectorAll('.faq-item'));
+  const buttons = items.map(it => it.querySelector('.faq-toggle'));
+  const panels  = items.map(it => it.querySelector('.faq-a'));
+
+  let openIndex = -1; // start: alles dicht
+
+  function closeItem(i) {
+    if (i < 0) return;
+    const it    = items[i];
+    const btn   = buttons[i];
+    const panel = panels[i];
+
+    it.classList.remove('is-open');
+    btn.setAttribute('aria-expanded', 'false');
+
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+    panel.getBoundingClientRect();   // force reflow
+    panel.style.maxHeight = '0px';
+  }
+
+  function openItem(i) {
+    if (i < 0) return;
+    const it    = items[i];
+    const btn   = buttons[i];
+    const panel = panels[i];
+
+    it.classList.add('is-open');
+    btn.setAttribute('aria-expanded', 'true');
+
+    panel.style.maxHeight = panel.scrollHeight + 'px';
+  }
+
+  function setOpen(i) {
+    if (i === openIndex) {
+      closeItem(openIndex);
+      openIndex = -1;
+      return;
+    }
+    closeItem(openIndex);
+    openItem(i);
+    openIndex = i;
+  }
+
+  // Click handlers (desktop & mobile)
+  buttons.forEach((btn, i) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      setOpen(i);
+    });
+
+    // Toetsenbord
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setOpen(i);
+      }
+    });
+  });
+
+  // Recalc open hoogte bij resize
+  function onResize() {
+    if (openIndex >= 0) {
+      panels[openIndex].style.maxHeight = panels[openIndex].scrollHeight + 'px';
+    }
+  }
+  window.addEventListener('resize', onResize, { passive: true });
+})();
+
