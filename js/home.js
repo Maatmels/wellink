@@ -337,7 +337,7 @@ async function loadGoogleReviewsViaProxy() {
 
 
 
-// ===== Cards met features + datum; behoudt alle bestaande interacties =====
+// ===== Cards met features + datum (ongewijzigd behalve eerdere mobile-snelheid) =====
 (function () {
   const viewport = document.getElementById('deck-viewport');
   const deck     = document.getElementById('deck');
@@ -347,14 +347,22 @@ async function loadGoogleReviewsViaProxy() {
   const nextBtns = Array.from(document.querySelectorAll('.deck-nav .next'));
   const mql = window.matchMedia('(max-width: 768px)');
 
-  const DRAG_SPEED   = 1.5;
+  // Mobile sneller swipen (laat ik staan zoals eerder besproken)
+  let DRAG_SPEED  = mql.matches ? 2.25 : 1.5;
   const ELASTIC_MAX  = 160;
   const ELASTIC_GAIN_DESKTOP = 0.35;
   const ELASTIC_GAIN_MOBILE  = 0.55;
-  const BOUNCE_MS    = 360;
+  let BOUNCE_MS    = mql.matches ? 240 : 360;
   const NUDGE_THRESHOLD_RESET = 8;
 
-  // ---------- Data ----------
+  mql.addEventListener ? mql.addEventListener('change', () => {
+    DRAG_SPEED = mql.matches ? 2.25 : 1.5;
+    BOUNCE_MS  = mql.matches ? 240 : 360;
+  }) : mql.addListener(() => {
+    DRAG_SPEED = mql.matches ? 2.25 : 1.5;
+    BOUNCE_MS  = mql.matches ? 240 : 360;
+  });
+
   const JSON_CANDIDATES = [
     '../recent/recent.json',
     '/recent/recent.json',
@@ -391,7 +399,6 @@ async function loadGoogleReviewsViaProxy() {
   const fixPath=(p)=>!p?'../images/home_afbeelding.jpg':(/^https?:\/\//i.test(p)||p.startsWith('/'))?p:('../'+String(p).replace(/^\.?\//,''));
   const escapeHTML=(s)=>String(s??'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
 
-  // NL datum formatter
   function formatDateISO(iso){
     if (!iso) return '';
     const d = new Date(iso);
@@ -517,7 +524,6 @@ async function loadGoogleReviewsViaProxy() {
       li.addEventListener('mouseenter',()=>{ if(alt && !mql.matches) img.src=alt; },{passive:true});
       li.addEventListener('mouseleave',()=>{ if(alt && !mql.matches) img.src=main; },{passive:true});
 
-      // hele kaart klikbaar (met drag-suppress)
       li.addEventListener('click',(e)=>{
         if (suppressClick) { e.preventDefault(); return; }
         const a=e.target.closest('a');
@@ -533,7 +539,7 @@ async function loadGoogleReviewsViaProxy() {
     requestAnimationFrame(()=>{ applyTransforms(); requestAnimationFrame(applyTransforms); });
   }
 
-  // ---------- Anim helpers ----------
+  // Anim helpers
   let animFrame=null;
   const easeOutCubic=t=>1-Math.pow(1-t,3);
   function animateTo(target, ms=BOUNCE_MS){
@@ -558,7 +564,7 @@ async function loadGoogleReviewsViaProxy() {
     return proposed;
   }
 
-  // ---------- Drag/swipe + click-suppress ----------
+  // Drag/swipe
   let dragging=false, startX=0, startScrollX=0, wasDragging=false;
   let wasNudgedAtDragStart=0;
   let suppressClick=false;
@@ -584,14 +590,13 @@ async function loadGoogleReviewsViaProxy() {
     if(!dragging) return;
     dragging=false; viewport.classList.remove('grabbing');
 
-    if (scrollX<0){ animateTo(0); }
-    else if (scrollX>maxScroll){ if(!mql.matches) endNudge=1; animateTo(maxScroll); }
+    if (scrollX<0){ animateTo(0, BOUNCE_MS); }
+    else if (scrollX>maxScroll){ if(!mql.matches) endNudge=1; animateTo(maxScroll, BOUNCE_MS); }
     else { if(!mql.matches && wasNudgedAtDragStart===1 && scrollX>(maxScroll-NUDGE_THRESHOLD_RESET)) endNudge=1; applyTransforms(); }
 
     setTimeout(()=>{ suppressClick=false; }, 180);
   }
 
-  // blokkeer click bubbels vlak na drag
   viewport.addEventListener('click', (e)=>{ if(suppressClick){ e.preventDefault(); e.stopPropagation(); } }, true);
 
   // Touch
@@ -599,7 +604,7 @@ async function loadGoogleReviewsViaProxy() {
   window.addEventListener('touchmove',(e)=>{ if(dragging){ continueDrag(e.touches[0].clientX); e.preventDefault(); }},{passive:false});
   window.addEventListener('touchend', endDrag);
 
-  // ---------- Desktop mouse drag + CUSTOM CURSOR ----------
+  // Desktop custom cursor
   const dragCursor=document.createElement('div');
   dragCursor.className='drag-cursor';
   dragCursor.innerHTML=`
@@ -609,36 +614,12 @@ async function loadGoogleReviewsViaProxy() {
   document.body.appendChild(dragCursor);
 
   let lastMoveT=0, lastX=0, vx=0;
-  function showCursor(){
-    if(mql.matches) return;
-    dragCursor.classList.add('is-visible');
-    viewport.classList.add('use-custom-cursor');
-  }
-  function hideCursor(){
-    dragCursor.classList.remove('is-visible');
-    viewport.classList.remove('use-custom-cursor');
-    dragCursor.style.setProperty('--cx','1');
-    dragCursor.style.setProperty('--cy','1');
-  }
+  function showCursor(){ if(mql.matches) return; dragCursor.classList.add('is-visible'); viewport.classList.add('use-custom-cursor'); }
+  function hideCursor(){ dragCursor.classList.remove('is-visible'); viewport.classList.remove('use-custom-cursor'); dragCursor.style.setProperty('--cx','1'); dragCursor.style.setProperty('--cy','1'); }
   function moveCursor(e){
     if(mql.matches) return;
     dragCursor.style.left = e.clientX+'px';
     dragCursor.style.top  = e.clientY+'px';
-
-    // Subtiele squash
-    const now=performance.now();
-    if(lastMoveT){
-      const dt=Math.max(1, now-lastMoveT);
-      const dx=e.clientX-lastX;
-      vx = dx/dt;
-      const speed=Math.min(1, Math.abs(vx)/1.2);
-      const STRENGTH=0.12;
-      const cx = 1 + speed*STRENGTH;
-      const cy = Math.max(0.92, 1 - speed*STRENGTH);
-      dragCursor.style.setProperty('--cx', cx.toFixed(3));
-      dragCursor.style.setProperty('--cy', cy.toFixed(3));
-    }
-    lastMoveT=now; lastX=e.clientX;
   }
 
   viewport.addEventListener('mouseenter', showCursor);
@@ -649,7 +630,7 @@ async function loadGoogleReviewsViaProxy() {
   window.addEventListener('mousemove',(e)=>{ if(dragging && !mql.matches){ continueDrag(e.clientX); moveCursor(e); } });
   window.addEventListener('mouseup', ()=>{ if(!mql.matches) endDrag(); });
 
-  // ---------- Pijlen ----------
+  // Pijlen
   prevBtns.forEach(btn=>btn?.addEventListener('click',()=>{
     if(endNudge===1 && !mql.matches){ endNudge=0; applyTransforms(); }
     else stepBy(-1);
@@ -659,7 +640,7 @@ async function loadGoogleReviewsViaProxy() {
     else if(endNudge===0 && !mql.matches){ endNudge=1; applyTransforms(); }
   }));
 
-  // ---------- Init ----------
+  // Init
   (async()=>{ renderDeck(await loadProjects()); })();
 
   // Responsief
@@ -744,3 +725,63 @@ async function loadGoogleReviewsViaProxy() {
   window.addEventListener('resize', onResize, { passive: true });
 })();
 
+// === Keuzes opslaan & meenemen naar /contact (querystring + storage) ===
+(function () {
+  const root = document.querySelector('.finder--bgphoto');
+  if (!root) return;
+
+  const STORE_KEY = 'wbk-selects';
+  const nextBtn   = root.querySelector('.finder__next');
+  const optionsEl = root.querySelector('#finder-options');
+  const labels    = Array.from(root.querySelectorAll('.finder-opt'));
+
+  function getSelectionFromURL() {
+    try {
+      const usp = new URLSearchParams(location.search);
+      return (usp.get('voorkeur') || '')
+        .split(',').map(s => s.trim().toLowerCase()).filter(Boolean);
+    } catch { return []; }
+  }
+
+  function readStored() {
+    const fromUrl = getSelectionFromURL();
+    if (fromUrl.length) return new Set(fromUrl);
+    try {
+      const raw = sessionStorage.getItem(STORE_KEY) || localStorage.getItem(STORE_KEY);
+      return raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch { return new Set(); }
+  }
+
+  function writeStored(sel) {
+    const arr = Array.from(sel);
+    const payload = JSON.stringify(arr);
+    try { sessionStorage.setItem(STORE_KEY, payload); } catch {}
+    try { localStorage.setItem(STORE_KEY, payload); } catch {}
+    const qs = arr.length ? ('?voorkeur=' + encodeURIComponent(arr.join(','))) : '';
+    nextBtn.setAttribute('href', '/contact' + qs);
+  }
+
+  function applyState(sel) {
+    labels.forEach(lb => {
+      const key = lb.dataset.key;
+      const on = sel.has(key);
+      lb.classList.toggle('is-selected', on);
+      const input = lb.querySelector('input[type="checkbox"]');
+      if (input) input.checked = on;
+    });
+    writeStored(sel);
+  }
+
+  const selected = readStored();
+  applyState(selected);
+
+  optionsEl.addEventListener('change', (e) => {
+    const cb = e.target.closest('input[type="checkbox"]');
+    if (!cb) return;
+    const key = (cb.value || '').toLowerCase();
+    if (!key) return;
+    if (cb.checked) selected.add(key);
+    else selected.delete(key);
+    applyState(selected);
+  });
+})();

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="../css/header.css" />
+  <link rel="stylesheet" href="../css/footer.css" />
+  <link rel="stylesheet" href="../css/contact.css" />
+</head>
+<body>
+  <!-- HEADER -->
+  <div id="header-root" data-include="../partials/header.html"></div>
+
+  <main>
+    <section class="contact" aria-label="Contact">
+      <div class="contact__wrap">
+        <div class="contact-card">
+          <h1 class="contact-title">Contact</h1>
+          <p class="contact-sub">We hebben uw voorkeur alvast ingevuld:</p>
+
+          <!-- (Toekomstig) formulier -->
+          <form id="contact-form" class="contact-form" action="#" method="post" novalidate>
+            <div class="contact-options" id="contact-options">
+              <label class="contact-opt">
+                <input type="checkbox" id="c-kozijnen" name="voorkeuren" value="kozijnen" />
+                <span>Kozijnen</span>
+              </label>
+              <label class="contact-opt">
+                <input type="checkbox" id="c-schuifpuien" name="voorkeuren" value="schuifpuien" />
+                <span>Schuifpuien</span>
+              </label>
+              <label class="contact-opt">
+                <input type="checkbox" id="c-deuren" name="voorkeuren" value="deuren" />
+                <span>Deuren</span>
+              </label>
+
+              <!-- voor toekomstige submits / e-mail: altijd actuele set in CSV -->
+              <input type="hidden" id="voorkeur-field" name="voorkeur" value="" />
+            </div>
+
+            <div class="contact-actions">
+              <a class="about-btn" href="/">
+                <span class="about-btn__label">Terug naar home</span>
+                <span class="about-btn__icon" aria-hidden="true">
+                  <img class="arrow-yellow" src="../images/pijlgeel.png" alt="">
+                  <img class="arrow-white"  src="../images/pijlwit.png"  alt="">
+                </span>
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <div id="footer-root" data-include="../partials/footer.html"></div>
+
+  <!-- Scripts -->
+  <script defer src="../js/header.js"></script>
+  <script defer src="../js/footer.js"></script>
+  <script defer src="../js/contact.js"></script>
+</body>
+

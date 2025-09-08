@@ -212,72 +212,140 @@
       </div>
     </section>
 
-    <!-- INSPIRATIE DECK (PROJECTEN) -->
-    <section class="insp-cards" aria-label="Project inspiratie">
-      <div class="insp-cards__wrap">
-        <!-- Links (desktop) / Boven (mobile) -->
-        <aside class="insp-cards__intro">
-          <h2 class="insp-cards__heading">Doe inspiratie op</h2>
+<!-- INSPIRATIE DECK (PROJECTEN) -->
+<section class="insp-cards" aria-label="Project inspiratie">
+  <div class="insp-cards__wrap">
+    <!-- Links (desktop) / Boven (mobile) -->
+    <aside class="insp-cards__intro">
+      <h2 class="insp-cards__heading">Doe inspiratie op</h2>
 
-          <!-- Desktop/Tablet-knop (verborgen op mobile) -->
-          <a class="about-btn projects__all" href="/projecten/">
-            <span class="about-btn__label">Bekijk alle projecten</span>
-            <span class="about-btn__icon">
-              <img class="arrow-yellow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
-              <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
-            </span>
-          </a>
+      <!-- Desktop/Tablet-knop (verborgen op mobile) -->
+      <a class="about-btn projects__all" href="/projecten/">
+        <span class="about-btn__label">Bekijk alle projecten</span>
+        <span class="about-btn__icon">
+          <img class="arrow-yellow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
+          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+        </span>
+      </a>
 
-          <!-- Desktop pijlen -->
-          <div class="deck-nav deck-nav--desktop" aria-hidden="false">
-            <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
-              <span class="deck-nav__icon">
-                <img class="icon-active"   src="../images/pijllinkswit.png"       alt="" aria-hidden="true">
-                <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
+      <!-- Desktop pijlen -->
+      <div class="deck-nav deck-nav--desktop" aria-hidden="false">
+        <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijllinkswit.png"   alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijllinksgrijs.png" alt="" aria-hidden="true">
+          </span>
+        </button>
+        <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijlrechtswit.png"  alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijlrechtsgrijs.png" alt="" aria-hidden="true">
+          </span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Deck rechts -->
+    <div class="insp-cards__deck">
+      <div class="deck-viewport" id="deck-viewport" aria-live="polite">
+        <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
+      </div>
+
+      <!-- Mobile pijlen -->
+      <div class="deck-nav deck-nav--mobile" aria-hidden="false">
+        <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijllinkswit.png"   alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijllinksgrijs.png" alt="" aria-hidden="true">
+          </span>
+        </button>
+        <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
+          <span class="deck-nav__icon">
+            <img class="icon-active"   src="../images/pijlrechtswit.png"  alt="" aria-hidden="true">
+            <img class="icon-disabled" src="../images/pijlrechtsgrijs.png" alt="" aria-hidden="true">
+          </span>
+        </button>
+      </div>
+
+      <!-- Mobile-knop -->
+      <a class="about-btn projects__all projects__all--mobile" href="/projecten/">
+        <span class="about-btn__label">Bekijk alle projecten</span>
+        <span class="about-btn__icon">
+          <img class="arrow-yellow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
+          <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- === SECTIE: Achtergrondfoto + headline + keuze-kaart === -->
+<section class="finder finder--bgphoto" aria-label="Wat zoekt u?">
+  <!-- Volle-breedte achtergrond -->
+  <div
+    class="finder-hero"
+    style="background-image:url('images/kies.jpg'); --bg:url('images/kies.jpg')"
+  >
+    <div class="finder-hero__overlay" aria-hidden="true"></div>
+
+    <!-- Overlay content (headline links op desktop, kaart rechts) -->
+    <div class="finder-hero__content">
+      <div class="finder-hero__layout">
+        <!-- GROTE HEADLINE in de foto -->
+        <h1 class="finder-hero__headline">
+          <span class="accent">Perfectie</span> in ieder detail
+        </h1>
+
+        <!-- Kaart -->
+        <div class="finder__card" id="finder-card">
+          <h2 class="finder__title">Wat zoekt u?</h2>
+          <p class="finder__subtitle">U kunt meerdere keuzes aanvinken</p>
+
+          <div class="finder__options" id="finder-options">
+            <label class="finder-opt" data-key="kozijnen">
+              <input type="checkbox" value="kozijnen" />
+              <span class="finder-opt__label">Kozijnen</span>
+              <span class="finder-checkwrap" aria-hidden="true">
+                <img class="finder-opt__check" src="images/vinkje.png" alt="">
               </span>
-            </button>
-            <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
-              <span class="deck-nav__icon">
-                <img class="icon-active"   src="../images/pijlrechtswit.png"      alt="" aria-hidden="true">
-                <img class="icon-disabled" src="../images/pijlrechtsgrijs.png"  alt="" aria-hidden="true">
+            </label>
+
+            <label class="finder-opt" data-key="schuifpuien">
+              <input type="checkbox" value="schuifpuien" />
+              <span class="finder-opt__label">Schuifpuien</span>
+              <span class="finder-checkwrap" aria-hidden="true">
+                <img class="finder-opt__check" src="images/vinkje.png" alt="">
               </span>
-            </button>
+            </label>
+
+            <label class="finder-opt" data-key="deuren">
+              <input type="checkbox" value="deuren" />
+              <span class="finder-opt__label">Deuren</span>
+              <span class="finder-checkwrap" aria-hidden="true">
+                <img class="finder-opt__check" src="images/vinkje.png" alt="">
+              </span>
+            </label>
           </div>
-        </aside>
 
-        <!-- Deck rechts -->
-        <div class="insp-cards__deck">
-          <div class="deck-viewport" id="deck-viewport" aria-live="polite">
-            <ul class="deck" id="deck"><!-- JS vult kaarten --></ul>
-          </div>
-
-          <!-- Mobile pijlen -->
-          <div class="deck-nav deck-nav--mobile" aria-hidden="false">
-            <button class="deck-nav__btn prev" type="button" aria-label="Vorige" aria-disabled="true">
-              <span class="deck-nav__icon">
-                <img class="icon-active"   src="../images/pijllinkswit.png"       alt="" aria-hidden="true">
-                <img class="icon-disabled" src="../images/pijllinksgrijs.png"  alt="" aria-hidden="true">
-              </span>
-            </button>
-            <button class="deck-nav__btn next" type="button" aria-label="Volgende" aria-disabled="false">
-              <span class="deck-nav__icon">
-                <img class="icon-active"   src="../images/pijlrechtswit.png"      alt="" aria-hidden="true">
-                <img class="icon-disabled" src="../images/pijlrechtsgrijs.png"  alt="" aria-hidden="true">
-              </span>
-            </button>
-          </div>
-
-          <!-- Mobile-knop -->
-          <a class="about-btn projects__all projects__all--mobile" href="/projecten/">
-            <span class="about-btn__label">Bekijk alle projecten</span>
-            <span class="about-btn__icon">
-              <img class="arrow-yellow" src="../images/pijlwit.png" alt="" aria-hidden="true" />
-              <img class="arrow-white"  src="../images/pijlwit.png"  alt="" aria-hidden="true" />
+          <!-- Knop: standaard ZWART (tekst wit), witte cirkel, zwarte pijl (images/pijlrechts.png).
+               Op hover/focus: solide geel (gedrag behouden). -->
+          <a class="finder__next" href="/contact">
+            <span class="finder__nextLabel">Volgende stap</span>
+            <span class="about-btn__icon" aria-hidden="true">
+              <img class="arrow-right" src="images/pijlrechts.png" alt="">
             </span>
           </a>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
+
+
+
 
     <!-- FAQ -->
     <section class="faq" aria-label="Veelgestelde vragen">

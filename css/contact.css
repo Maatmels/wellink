@@ -1,0 +1,89 @@
+/* Font */
+@font-face {
+    font-family: "Jost";
+    src: url("../fonts/Jost-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  *,
+  *::before,
+  *::after { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    color: #111;
+    background: #fff;
+    line-height: 1.5;
+    font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  /* Layout */
+  .contact { padding: clamp(24px, 6vw, 56px) 16px; }
+  .contact__wrap { max-width: 960px; margin: 0 auto; }
+  .contact-card {
+    background:#fff;
+    border-radius:12px;
+    box-shadow:0 12px 32px rgba(0,0,0,.08);
+    padding: clamp(18px,3vw,28px);
+    display:grid;
+    gap:14px;
+  }
+  .contact-title { margin:0; font-weight:700; font-size: clamp(22px,3vw,28px); }
+  .contact-sub { margin:0; color:#666; }
+  .contact-form { display:grid; gap:14px; }
+  
+  /* Opties */
+  .contact-options { display:grid; gap:10px; }
+  .contact-opt {
+    display:flex; align-items:center; gap:10px;
+    padding:12px 14px;
+    border:1px solid #e5e5e5;
+    border-radius:10px;
+    background:transparent;
+  }
+  .contact-opt input { width:18px; height:18px; }
+  
+  /* Actions */
+  .contact-actions { margin-top: 4px; }
+  
+  /* Knop: kopie van about-btn style (zodat contact los van home.css werkt) */
+  .about-btn {
+    --yellow: #ffcd0a;
+    display:inline-flex; align-items:center; gap:10px;
+    padding:10px 14px;
+    border:1px solid var(--yellow);
+    border-radius:8px;
+    background:#fff; color:#000;
+    text-decoration:none; width:max-content;
+    transition: background-color .22s ease, border-color .22s ease, transform .1s ease;
+  }
+  .about-btn:active { transform: translateY(1px); }
+  .about-btn__label { line-height:1; }
+  .about-btn__icon {
+    position:relative; width:28px; height:28px; border-radius:50%;
+    border:1px solid var(--yellow); display:grid; place-items:center;
+    transition:background-color .22s ease, border-color .22s ease; overflow:visible;
+  }
+  .about-btn__icon img {
+    position:absolute; inset:0; margin:auto; width:18px; height:18px;
+    transform-origin:50% 50%; transition: transform .14s ease-out, opacity .14s ease-out;
+  }
+  .about-btn__icon .arrow-yellow { opacity:1; transform:scale(1); }
+  .about-btn__icon .arrow-white  { opacity:0; transform:scale(0); }
+  .about-btn:hover,
+  .about-btn:focus-visible { background:var(--yellow); outline:none; }
+  .about-btn:hover .about-btn__icon,
+  .about-btn:focus-visible .about-btn__icon { background:#000; border-color:#000; }
+  .about-btn:hover .arrow-yellow,
+  .about-btn:focus-visible .arrow-yellow { opacity:0; transform:scale(0); }
+  .about-btn:hover .arrow-white,
+  .about-btn:focus-visible .arrow-white { opacity:1; transform:scale(1); }
+  .about-btn:focus-visible { box-shadow:0 0 0 2px #000 inset; }
+  
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    .about-btn, .about-btn__icon, .about-btn__icon img { transition:none !important; }
+  }
+  
