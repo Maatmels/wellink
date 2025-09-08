@@ -27,148 +27,141 @@ body {
   --hero-h-desktop: 50vh; /* <<< geforceerde, duidelijk kleinere hoogte op desktop */
 }
 
-/* ===== HERO ===== */
-.split-hero {
-  position: relative;
-  width: 100%;
-  height: 85vh;                    /* desktop: iets lager dan fullscreen */
+/* ===== HERO – overlay (desktop & mobiel) ===== */
+.split-hero{
+  --yellow:#ffcd0a;
+  position:relative; width:100%;
+  height:85vh; min-height:560px;
+  color:#fff; font-family:"Jost",system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:transparent;
+  overflow:hidden;
+}
+.hero-media{ position:absolute; inset:0; margin:0; overflow:hidden; z-index:0; }
+.hero-media img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+.hero-media::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.38),rgba(0,0,0,.25));
+  z-index:1; pointer-events:none;
+}
+.hero-text{ position:absolute; inset:0; display:grid; align-items:center; z-index:2; background:transparent; pointer-events:none; }
+.hero-text-inner{
+  position:relative; pointer-events:auto;
+  display:grid; gap:clamp(12px,1.6vw,16px);
+  justify-items:start; width:min(50vw,980px);
+  margin-left:clamp(16px,6vw,96px);
+}
+.hero-title{ margin:0; font-weight:700; line-height:.98; letter-spacing:-.01em; font-size:clamp(42px,7vw,92px); text-shadow:0 2px 10px rgba(0,0,0,.25); }
+.hero-title .line{ display:block; }
+.hero-title .accent{ color:var(--yellow); }
+
+/* CTA */
+.hero-cta{
+  --circle-bg:#000; --circle-border:#000; --pulse-color:#fff;
+  position:relative; display:inline-flex; align-items:center; gap:10px;
+  padding:10px 14px; border:1px solid var(--yellow); border-radius:8px;
+  background:var(--yellow); color:#000; text-decoration:none;
+  transition:background-color .22s ease,border-color .22s ease,color .22s ease,transform .1s ease;
+  isolation:isolate; pointer-events:auto;
+}
+.hero-cta:active{ transform:translateY(1px); }
+.hero-cta__label{ line-height:1; }
+.hero-cta__icon{
+  position:relative; width:28px; height:28px; border-radius:50%;
+  border:1px solid var(--circle-border); background:var(--circle-bg);
+  display:grid; place-items:center; overflow:visible;
+  transition:background-color .22s ease,border-color .22s ease;
+}
+.hero-cta__icon img{
+  position:absolute; width:18px; height:18px; inset:0; margin:auto;
+  transform-origin:50% 50%; transition:transform .14s ease-out,opacity .14s ease-out;
+}
+.hero-cta__icon .arrow-white{ opacity:1; transform:scale(1); }
+.hero-cta__icon .arrow-black{ opacity:0; transform:scale(0); }
+.hero-cta__icon::after,.hero-cta__icon::before{ content:""; position:absolute; inset:-4px; border-radius:50%; pointer-events:none; opacity:0; }
+.hero-cta__icon::after{ border:2px solid var(--pulse-color); }
+.hero-cta__icon::before{ inset:-8px; background:radial-gradient(circle at center,rgba(255,255,255,.18) 0 46%,rgba(255,255,255,.18) 47% 52%,rgba(255,255,255,0) 53% 100%); }
+@keyframes heroRingPulseMain{0%{opacity:.32;transform:scale(1)}100%{opacity:0;transform:scale(1.45)}}
+@keyframes heroRingPulseTrail{0%{opacity:.20;transform:scale(1)}100%{opacity:0;transform:scale(1.35)}}
+.hero-cta:hover,.hero-cta:focus-visible{ background:#000; border-color:#000; color:#fff; }
+.hero-cta:hover .hero-cta__icon,.hero-cta:focus-visible .hero-cta__icon{ --circle-bg:#fff; --circle-border:#fff; }
+.hero-cta:hover .hero-cta__icon .arrow-white,.hero-cta:focus-visible .hero-cta__icon .arrow-white{ opacity:0; transform:scale(0); }
+.hero-cta:hover .hero-cta__icon .arrow-black,.hero-cta:focus-visible .hero-cta__icon .arrow-black{ opacity:1; transform:scale(1); }
+.hero-cta:hover .hero-cta__icon::after,.hero-cta:active .hero-cta__icon::after{ animation:heroRingPulseMain 360ms ease-out; }
+.hero-cta:hover .hero-cta__icon::before,.hero-cta:active .hero-cta__icon::before{ animation:heroRingPulseTrail 480ms ease-out; }
+.hero-cta:focus-visible{ box-shadow:0 0 0 2px #fff inset; }
+.hero-sub{ margin-top:4px; font-size:clamp(12px,1.2vw,14px); color:#fff; opacity:.95; text-shadow:0 1px 2px rgba(0,0,0,.25); }
+
+/* ===== Desktop: USP's linksboven, nu nog hoger ===== */
+@media (min-width:769px){
+  .split-hero .hero-usps.hero-usps{
+    position:absolute;
+    /* lager getal = dichter bij de bovenkant = meer afstand tot titel */
+    top:clamp(0px,0.0vw,0px) !important;
+    left:clamp(12px,3vw,36px);
+    display:flex; gap:clamp(10px,2vw,18px); list-style:none; margin:0; padding:0; z-index:3;
+  }
+  .split-hero .hero-usps li{ display:inline-flex; align-items:center; gap:8px; white-space:nowrap; font-size:clamp(12px,1.2vw,15px); opacity:1; transform:none; }
+  .split-hero .hero-usps img{ width:18px; height:18px; filter:drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
 }
 
-.hero-media {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  overflow: hidden;
-  z-index: 0;                       /* onder overlay & tekst */
-}
-.hero-media img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;                 /* vult, cropt waar nodig */
-  object-position: center;
-}
-/* Donkerdere overlay op desktop */
-.hero-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.25);      /* ~25% zwart: beter leesbaar */
-  pointer-events: none;
-  z-index: 1;
-}
+/* ===== Mobiel: forceer overlay & verwijder wit vlak (alleen mobile) ===== */
+@media (max-width:768px){
+  /* Zorg dat de container altijd het canvas is */
+  .split-hero.split-hero{ position:relative !important; display:block !important; height:88svh !important; min-height:520px !important; background:transparent !important; overflow:hidden !important; }
 
-/* Tekstlaag: gecentreerd bovenop (desktop) */
-.hero-text {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  background: transparent;           /* GEEN blauw op desktop */
-  color: #fff;
-  padding: clamp(16px, 4vw, 32px);
-  text-align: center;
-  z-index: 2;                        /* boven overlay */
-}
-.hero-text-inner {
-  max-width: 720px;
-  width: min(90%, 720px);
-  display: grid;
-  gap: clamp(12px, 2vw, 20px);
-  justify-items: center;
-}
-.hero-text h1 {
-  margin: 0;
-  font-size: clamp(26px, 4.2vw, 48px);
-  line-height: 1.06;
-  font-weight: 600;
-  color: #fff;
-}
-.hero-text p {
-  margin: 0;
-  font-size: clamp(15px, 1.4vw, 18px);
-  color: #cfd6e6;
-}
+  /* Afbeelding absoluut onderop */
+  .split-hero .hero-media.hero-media{
+    position:absolute !important; top:0 !important; right:0 !important; bottom:0 !important; left:0 !important;
+    height:auto !important; min-height:0 !important; z-index:0 !important; margin:0 !important;
+  }
+  .split-hero .hero-media::after{ background:linear-gradient(to bottom,rgba(0,0,0,.45),rgba(0,0,0,.25)) !important; }
 
-/* CTA: 8px ronding en jouw breedte-animatie */
-.cta {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  text-decoration: none;
-  font-size: 18px;
-  padding: 10px 16px;
-  border: none;
-  background: transparent;
-  isolation: isolate;
-  border-radius: 8px;                /* ronding */
-}
-.cta > span { position: relative; z-index: 1; }
-.cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: #ffcd0a;
-  z-index: 0;
-  transform: scaleX(1);
-  transform-origin: center;
-  transition: transform .25s ease;
-  border-radius: 8px;                /* ronding geelvlak */
-}
-.cta:hover::before,
-.cta:focus-visible::before { transform: scaleX(1.20); }
-.cta:active::before        { transform: scaleX(1.30); }
-.cta:focus-visible {
-  outline: 2px solid #000;
-  outline-offset: 2px;
-}
+  /* Content absoluut erbóven (niet eronder) */
+  .split-hero .hero-text.hero-text{
+    position:absolute !important; top:0 !important; right:0 !important; bottom:0 !important; left:0 !important;
+    display:grid !important; align-items:center !important; justify-items:center !important;
+    background:transparent !important; padding:0 !important; margin:0 !important; z-index:2 !important;
+    pointer-events:none !important; /* inner blijft klikbaar */
+  }
+  .split-hero .hero-text::before{ content:none !important; }
 
-/* ===== MOBILE (≤768px) =====
-   - Afbeelding 60% van het scherm hoog (zodat blauw blok meteen zichtbaar is)
-   - Blauw tekstblok ONDER de afbeelding
-*/
-@media (max-width: 768px) {
-  .split-hero {
-    height: auto;                    /* totale hoogte = beeld + tekstblok */
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+  /* Inner nooit wit/box-shadow */
+  .split-hero .hero-text-inner.hero-text-inner{
+    width:min(92vw,720px) !important; padding-inline:clamp(16px,4vw,24px) !important;
+    text-align:center !important; justify-items:center !important; gap:clamp(10px,3vw,16px) !important;
+    background:transparent !important; box-shadow:none !important; pointer-events:auto !important;
   }
 
-  .hero-media {
-    position: relative;              /* niet overlappen */
-    height: 60svh;                   /* jouw instelling */
-    height: 60vh;                    /* fallback */
-    min-height: 360px;               /* optioneel: ondergrens */
-    z-index: 0;
+  /* USP-rotatie + extra ruimte t.o.v. titel */
+  .split-hero .hero-usps{
+    list-style:none;
+    margin:0 0 clamp(14px,4.5vw,22px) 0; /* iets hoger (meer ruimte boven titel) */
+    padding:0; display:grid; place-items:center;
   }
-  .hero-media::after {
-    content: none;                   /* GEEN overlay op mobile */
+  .split-hero .hero-usps li{
+    grid-area:1 / 1; display:inline-flex; align-items:center; gap:8px;
+    font-size:clamp(12px,3.2vw,14px); opacity:0; transform:translateY(-6px);
+    transition:opacity .45s ease, transform .45s ease;
   }
-  .hero-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;               /* ‘ingezoomd’ op small screens — gewenst */
-    object-position: center;
-    display: block;
-  }
+  .split-hero .hero-usps li.is-active{ opacity:1; transform:translateY(0); }
+  .split-hero .hero-usps img{ width:16px; height:16px; filter:drop-shadow(0 1px 1px rgba(0,0,0,.25)); }
 
-  .hero-text {
-    position: static;                /* onder de afbeelding */
-    background: #18263f;             /* blauw blok op mobile */
-    color: #fff;
-    padding: clamp(22px, 5vw, 40px);
-    text-align: center;
-    z-index: 0;
+  .split-hero .hero-title{ 
+    font-size:clamp(34px,9.5vw,56px); 
+    line-height:1.02; 
+    margin-top: 24px; /* << hier regel toevoegen */
   }
-  .hero-text-inner {
-    max-width: 620px;
-    width: min(92%, 620px);
-    justify-items: center;
+  
+  .split-hero .hero-sub{ font-size:clamp(12px,3.2vw,14px); margin-top:4px; }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion:reduce){
+  .hero-cta, .hero-cta__icon, .hero-cta__icon img, .hero-cta__icon::before, .hero-cta__icon::after{
+    transition:none !important; animation:none !important;
   }
 }
+
 
 
 /* USP Banner */
@@ -326,20 +319,6 @@ body {
   flex: 0 0 auto;
 }
 
-/* --- FIX: mobile volgorde hero split --- */
-@media (max-width: 768px) {
-  .split-hero {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    grid-template-rows: auto auto !important;
-    grid-template-areas:
-      "media"
-      "text" !important;
-  }
-  .hero-media { grid-area: media !important; }
-  .hero-text  { grid-area: text  !important; }
-}
-
 
 
 /* ===== Inspiratie ===== */
@@ -363,10 +342,11 @@ body {
   font-size: 0;
 }
 .inspiration__title::after {
-  content: "Wat wij doen";
+  content: "Bekijk ons aanbod";            /* was: "Wat wij doen" */
   font-size: clamp(22px, 3vw, 32px);
   line-height: 1.2;
   display: inline-block;
+  font-weight: 700;                        /* dikgedrukt */
 }
 
 .inspiration__track {
@@ -397,9 +377,10 @@ body {
   overflow: hidden;
   background: #fff;
 }
+
 .cat-card__media {
   background: #f7f7f7;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;               /* hoger (was 16/9) */
   display: grid;
   place-items: center;
   transition: background-color .25s ease;
@@ -407,13 +388,14 @@ body {
   overflow: hidden;
 }
 .cat-card__media img {
-  max-width: 88%;
-  max-height: 88%;
+  max-width: 92%;                    /* ietsje groter (was 88%) */
+  max-height: 92%;
   object-fit: contain;
   display: block;
   transform: scale(1);
   transition: transform .25s ease;
 }
+
 .cat-card__text {
   display: grid;
   gap: 6px;
@@ -449,14 +431,12 @@ body {
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
     padding-inline: calc((100vw - var(--card-w)) / 2);
-
-    /* Snap AAN en naar het MIDDEN van de viewport */
     scroll-snap-type: x mandatory;
   }
 
   .cat-card {
-    scroll-snap-align: center;       /* kaart centrum klikt in het viewport-midden */
-    scroll-snap-stop: always;        /* consistente snaps */
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
   }
 
   .inspiration__nav {
@@ -467,13 +447,12 @@ body {
     margin-top: 10px;
   }
 
-  /* Knoppen: losse pijl, met layered images voor smooth crossfade */
   .insp-nav__btn {
     position: relative;
     appearance: none;
     border: 0;
     background: transparent;
-    padding: 6px;                    /* hitbox */
+    padding: 6px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -483,7 +462,6 @@ body {
   }
   .insp-nav__btn:active { transform: scale(1.06); }
 
-  /* Twee lagen: active (zwart) + disabled (grijs) */
   .insp-nav__img {
     position: absolute;
     inset: 0;
@@ -494,16 +472,29 @@ body {
     pointer-events: none;
     user-select: none;
     opacity: 1;
-    transition: opacity .22s ease;   /* smooth */
+    transition: opacity .22s ease;
   }
-  .insp-nav__img.is-disabled-layer { opacity: 0; } /* standaard onzichtbaar */
+  .insp-nav__img.is-disabled-layer { opacity: 0; }
 
-  /* Als disabled: fade zwart uit en grijs in */
   .insp-nav__btn[aria-disabled="true"] .insp-nav__img.is-active-layer { opacity: 0; }
   .insp-nav__btn[aria-disabled="true"] .insp-nav__img.is-disabled-layer { opacity: 1; }
 
-  /* Disabled pijl niet klikbaar */
   .insp-nav__btn[aria-disabled="true"] { pointer-events: none; }
+
+  /* >>> FIX: op mobile nooit 2 geel tegelijk.
+     Negeer hover/focus-states voor NIET-actieve kaarten,
+     zodat alleen .is-active de gele stijl krijgt. */
+  .cat-card:not(.is-active):hover .cat-card__media,
+  .cat-card:not(.is-active):focus-visible .cat-card__media { background: #f7f7f7 !important; }
+
+  .cat-card:not(.is-active):hover .cat-card__media img,
+  .cat-card:not(.is-active):focus-visible .cat-card__media img { transform: scale(1) !important; }
+
+  .cat-card:not(.is-active):hover .cat-card__title-default,
+  .cat-card:not(.is-active):focus-visible .cat-card__title-default { opacity: 1 !important; }
+
+  .cat-card:not(.is-active):hover .cat-card__title-hover,
+  .cat-card:not(.is-active):focus-visible .cat-card__title-hover { opacity: 0 !important; }
 }
 
 /* Desktop/tablet: nav verbergen */
@@ -516,6 +507,8 @@ body {
   .insp-nav__btn { transition: none; }
   .insp-nav__img { transition: none; }
 }
+
+
 
 
 /* Page Loader */
@@ -1546,3 +1539,4 @@ body {
   .faq-toggle:hover { background: #f7f7f7; }
   .faq-item.is-open .faq-toggle:hover { background: #ffcd0a; }
 }
+

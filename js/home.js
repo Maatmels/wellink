@@ -37,6 +37,50 @@
     .catch(err => console.error('Kon partial niet laden:', err));
 })();
 
+// USP-rotatie (mobile): smooth crossfade/slide, elke 5s
+(function () {
+  const section = document.querySelector('.split-hero');
+  if (!section) return;
+  const list = section.querySelector('.hero-usps');
+  if (!list) return;
+
+  const items = Array.from(list.querySelectorAll('li'));
+  if (items.length <= 1) return;
+
+  const mql = window.matchMedia('(max-width: 768px)');
+  let idx = 0;
+  let timer = null;
+
+  function show(i) {
+    items.forEach((li, k) => li.classList.toggle('is-active', k === i));
+  }
+
+  function start() {
+    stop();
+    if (mql.matches) {
+      show(idx);
+      timer = setInterval(() => {
+        idx = (idx + 1) % items.length;
+        show(idx);
+      }, 5000);
+    } else {
+      // desktop: alles zichtbaar naast elkaar
+      items.forEach(li => li.classList.add('is-active'));
+    }
+  }
+
+  function stop() {
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  if (mql.addEventListener) mql.addEventListener('change', start);
+  else mql.addListener(start);
+
+  document.addEventListener('visibilitychange', () => (document.hidden ? stop() : start()));
+
+  start();
+})();
+
 
 // Mobile: snap naar midden + pijlen direct grijs als uiterste kaart actief is + smooth crossfade
 (function () {
@@ -138,34 +182,8 @@
     }
     syncActive();
   });
-
-  function handleMQChange(e) {
-    if (e.matches) {
-      requestAnimationFrame(() => {
-        if (cards[1]) {
-          centerIndex(1, 'auto');
-          setNavStateByIndex(1);
-        }
-        syncActive();
-      });
-    } else {
-      cards.forEach(c => c.classList.remove('is-active'));
-    }
-  }
-  if (mql.addEventListener) mql.addEventListener('change', handleMQChange);
-  else mql.addListener(handleMQChange);
-
-  // NAV actions: pijlen meteen grijs indien target de rand is, nog vóór de scroll klaar is
-  function scrollByCards(delta) {
-    const current = getCenteredIndex();
-    const target = Math.max(0, Math.min(cards.length - 1, current + delta));
-    setNavStateByIndex(target);       // direct visueel updaten (zwart↔grijs)
-    centerIndex(target, 'smooth');    // smooth naar de target
-    setTimeout(() => syncActive(), 90);
-  }
-  if (prevBtn) prevBtn.addEventListener('click', () => { if (mql.matches) scrollByCards(-1); });
-  if (nextBtn) nextBtn.addEventListener('click', () => { if (mql.matches) scrollByCards(1); });
 })();
+
 
 
 (function () {
