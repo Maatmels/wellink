@@ -1,89 +1,492 @@
-/* Font */
+/* ===== Font (Jost) ===== */
 @font-face {
-    font-family: "Jost";
-    src: url("../fonts/Jost-Regular.ttf") format("truetype");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-  
-  *,
-  *::before,
-  *::after { box-sizing: border-box; }
-  
-  body {
-    margin: 0;
-    color: #111;
-    background: #fff;
-    line-height: 1.5;
-    font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  }
-  
-  /* Layout */
-  .contact { padding: clamp(24px, 6vw, 56px) 16px; }
-  .contact__wrap { max-width: 960px; margin: 0 auto; }
-  .contact-card {
-    background:#fff;
-    border-radius:12px;
-    box-shadow:0 12px 32px rgba(0,0,0,.08);
-    padding: clamp(18px,3vw,28px);
-    display:grid;
-    gap:14px;
-  }
-  .contact-title { margin:0; font-weight:700; font-size: clamp(22px,3vw,28px); }
-  .contact-sub { margin:0; color:#666; }
-  .contact-form { display:grid; gap:14px; }
-  
-  /* Opties */
-  .contact-options { display:grid; gap:10px; }
-  .contact-opt {
-    display:flex; align-items:center; gap:10px;
-    padding:12px 14px;
-    border:1px solid #e5e5e5;
-    border-radius:10px;
-    background:transparent;
-  }
-  .contact-opt input { width:18px; height:18px; }
-  
-  /* Actions */
-  .contact-actions { margin-top: 4px; }
-  
-  /* Knop: kopie van about-btn style (zodat contact los van home.css werkt) */
-  .about-btn {
-    --yellow: #ffcd0a;
-    display:inline-flex; align-items:center; gap:10px;
-    padding:10px 14px;
-    border:1px solid var(--yellow);
-    border-radius:8px;
-    background:#fff; color:#000;
-    text-decoration:none; width:max-content;
-    transition: background-color .22s ease, border-color .22s ease, transform .1s ease;
-  }
-  .about-btn:active { transform: translateY(1px); }
-  .about-btn__label { line-height:1; }
-  .about-btn__icon {
-    position:relative; width:28px; height:28px; border-radius:50%;
-    border:1px solid var(--yellow); display:grid; place-items:center;
-    transition:background-color .22s ease, border-color .22s ease; overflow:visible;
-  }
-  .about-btn__icon img {
-    position:absolute; inset:0; margin:auto; width:18px; height:18px;
-    transform-origin:50% 50%; transition: transform .14s ease-out, opacity .14s ease-out;
-  }
-  .about-btn__icon .arrow-yellow { opacity:1; transform:scale(1); }
-  .about-btn__icon .arrow-white  { opacity:0; transform:scale(0); }
-  .about-btn:hover,
-  .about-btn:focus-visible { background:var(--yellow); outline:none; }
-  .about-btn:hover .about-btn__icon,
-  .about-btn:focus-visible .about-btn__icon { background:#000; border-color:#000; }
-  .about-btn:hover .arrow-yellow,
-  .about-btn:focus-visible .arrow-yellow { opacity:0; transform:scale(0); }
-  .about-btn:hover .arrow-white,
-  .about-btn:focus-visible .arrow-white { opacity:1; transform:scale(1); }
-  .about-btn:focus-visible { box-shadow:0 0 0 2px #000 inset; }
-  
-  /* Reduce motion */
-  @media (prefers-reduced-motion: reduce) {
-    .about-btn, .about-btn__icon, .about-btn__icon img { transition:none !important; }
-  }
-  
+  font-family: "Jost";
+  src: url("../fonts/Jost-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root{
+  --yellow:#ffcd0a;
+  --text:#111;
+  --muted:#666;
+  --border:#e5e5e5;
+  --steps-h:72px;           /* sticky hoogte onderin */
+  --step-dot:28px;          /* cirkelmaat */
+  --err:#e53935;
+  --ok:#2e7d32;
+  --blue:#18263f;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+[hidden] { display:none !important; }
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: #fff;
+  line-height: 1.5;
+  font-family: "Jost", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* ruimte voor sticky stappenbalk */
+main { padding-bottom: calc(var(--steps-h) + 16px); }
+
+/* ===== Volledige “pagina’s” (hero + stap 1) ===== */
+.contact-hero,
+#step-opstelling.contact-step{
+  min-height: calc(100svh - var(--steps-h));
+  display: grid;
+  align-items: center;
+}
+
+/* ===== Individuele marges tussen vragen (per sectie ingesteld) ===== */
+#step-aantallen.contact-step{
+  margin-top: clamp(40px, 8vw, 192px);
+}
+/* EXTRA ruimte tssn vraag 2 en 3 */
+#step-afwerking.contact-step{
+  margin-top: clamp(60px, 10vw, 240px);
+}
+#step-kleur.contact-step{
+  margin-top: clamp(40px, 8vw, 192px);
+}
+#step-termijn.contact-step{
+  margin-top: clamp(40px, 8vw, 192px);
+}
+#step-gegevens.contact-step{
+  margin-top: clamp(40px, 8vw, 192px);
+}
+
+.contact-step--quantities,
+.contact-step--finish,
+.contact-step--color,
+.contact-step--term,
+.contact-step--details{
+  min-height: auto;
+  display: grid;
+  align-items: start;
+  padding-block: clamp(12px, 2.2vw, 24px);
+}
+
+/* ===== Intro / hero ===== */
+.contact-hero { padding: 0 16px; }
+.contact-hero__wrap{
+  width:min(1100px,92vw);
+  margin:0 auto;
+  display:grid; gap:10px;
+  text-align:left;
+}
+.overline{
+  margin:0;
+  color:#444;
+  font-size: clamp(13px,2.1vw,14px);
+  letter-spacing:.02em;
+}
+.contact-hero__title{
+  margin:0;
+  font-weight:800;
+  font-size: clamp(28px,7vw,56px);
+  line-height:1.06;
+}
+.contact-hero__sub{
+  margin: 2px 0 0;
+  color:#444;
+  font-size: clamp(12px,2vw,14px);
+  max-width: 62ch;
+}
+.contact-hero__sub a{ color:#000; }
+.contact-hero__mini{
+  margin: 2px 0 12px;
+  color:#555;
+  font-size: clamp(12px,2vw,14px);
+}
+
+/* ===== Zwarte knop (incl. puls) ===== */
+.finder__next{
+  --yellow:#ffcd0a;
+  display:inline-flex; align-items:center; gap:10px;
+  padding:10px 14px;
+  border:1px solid #000;
+  border-radius:8px;
+  background:#000;
+  color:#fff;
+  text-decoration:none;
+  width:max-content;
+  transition: background-color .22s ease, border-color .22s ease, transform .1s ease, opacity .18s ease;
+}
+.finder__next[disabled],
+.finder__next.is-disabled{ opacity:.55; pointer-events:none; cursor:not-allowed; }
+.finder__next:active{ transform: translateY(1px); }
+.finder__nextLabel{ line-height:1; }
+.about-btn__icon{
+  position: relative; width:28px; height:28px; border-radius:50%;
+  display:grid; place-items:center;
+  background:#fff; border:1px solid #000;
+  transition: background-color .22s ease, border-color .22s ease;
+  overflow:visible;
+}
+.about-btn__icon img.arrow-right{
+  position:absolute; inset:0; margin:auto;
+  width:18px; height:18px;
+  transition: filter .14s ease-out, transform .14s ease-out;
+}
+.finder__next:hover,
+.finder__next:focus-visible{
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color:#000;
+}
+.finder__next:hover .about-btn__icon,
+.finder__next:focus-visible .about-btn__icon{
+  background:#000; border-color:#000;
+}
+.finder__next:hover .about-btn__icon img.arrow-right,
+.finder__next:focus-visible .about-btn__icon img.arrow-right{
+  filter: invert(1) brightness(2);
+}
+/* >>> ZWARTE PULS rond het pijltje (globaal) */
+.about-btn__icon::after{
+  content:""; position:absolute; inset:-4px; border-radius:50%;
+  border:2px solid #000; opacity:0; pointer-events:none;
+}
+.about-btn__icon::before{
+  content:""; position:absolute; inset:-8px; border-radius:50%; pointer-events:none; opacity:0;
+  background: radial-gradient(circle at center,
+    rgba(0,0,0,.16) 0 46%,
+    rgba(0,0,0,.16) 47% 52%,
+    rgba(0,0,0,0)   53% 100%);
+}
+.finder__next:hover .about-btn__icon::after,
+.finder__next:active .about-btn__icon::after { animation: aboutRingPulseMain 360ms ease-out; }
+.finder__next:hover .about-btn__icon::before,
+.finder__next:active .about-btn__icon::before { animation: aboutRingPulseTrail 480ms ease-out; }
+@keyframes aboutRingPulseMain{ 0%{opacity:.28;transform:scale(1)} 100%{opacity:0;transform:scale(1.45)} }
+@keyframes aboutRingPulseTrail{ 0%{opacity:.18;transform:scale(1)} 100%{opacity:0;transform:scale(1.35)} }
+
+/* ===== Stap container ===== */
+.contact-step{ padding: 0 16px; }
+.contact-step__wrap{ width:min(1100px,92vw); margin:0 auto; }
+
+.contact-step__head{ margin-bottom: 16px; text-align:left; }
+.contact-step__title{
+  margin:0;
+  font-weight:800;
+  font-size: clamp(22px,5.2vw,36px);
+  line-height:1.1;
+}
+.contact-step__hint{
+  margin: 4px 0 0;
+  color:#555;
+  font-size: clamp(12px,2vw,14px);
+}
+
+/* Error label bij stap 1 */
+.form-error{
+  margin-left: 12px;
+  font-size: 14px;
+  color: var(--err);
+}
+
+/* Form + opties */
+.select-form{ display:grid; gap:16px; }
+.opts-grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 12px;
+}
+
+/* Optiekaart (Stap 1, 3, 4, 5) */
+.opt-card{
+  position: relative;
+  display:block;
+  padding: 14px 12px 12px;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:8px;
+  min-height: 160px;
+  cursor:pointer;
+  user-select:none;
+  overflow:hidden;
+  transition:border-color .22s ease, color .22s ease, box-shadow .22s ease;
+}
+@media (hover:hover){
+  .opt-card:hover{ border-color: var(--yellow); }
+  .opt-card:hover .opt-label{ color: var(--yellow); }
+}
+.opt-card.is-selected{
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px rgba(255,205,10,.14);
+}
+.opt-card.is-selected .opt-label{ color: var(--yellow); }
+
+/* >>> ERROR pulse (1 seconde) */
+.opt-card.is-error{
+  border-color: var(--err) !important;
+  box-shadow: 0 0 0 2px rgba(229,57,53,.18) !important;
+}
+
+/* onzichtbare input (checkbox of radio) */
+.opt-card > input{
+  position:absolute;
+  opacity:0;
+  width:1px; height:1px;
+  left:0; top:0;
+}
+
+/* Thumb linksboven (basis: 72x72) */
+.opt-thumb{
+  position:absolute; left:10px; top:10px;
+  width:72px; height:72px; border-radius:6px; overflow:hidden;
+  display:block;
+}
+.opt-thumb img{ width:100%; height:100%; object-fit:contain; display:block; }
+
+/* Titel linksonder – NIET bold, iets groter */
+.opt-label{
+  position:absolute; left:12px; bottom:10px;
+  font-weight:400; color:#000;
+  font-size: 19px;
+  transition: color .22s ease;
+}
+
+/* Vinkje rechtsonder – smooth */
+.opt-check{
+  position:absolute; right:10px; bottom:10px;
+  width:22px; height:22px;
+  opacity:0; transform: scale(.9);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events:none;
+}
+.opt-card.is-selected .opt-check{ opacity:1; transform: scale(1); }
+
+/* ===== Stap 2: Aantallen ===== */
+.is-hidden{ display:none !important; }
+
+.qty-groups{ display:grid; gap:14px; }
+
+.qty-group{
+  display:grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px;
+  align-items:start;
+}
+
+/* Links: titel + afbeelding onder de titel gecentreerd */
+.qty-left{
+  display:grid; gap:6px;
+  justify-self:start;
+  text-align:center;
+}
+.qty-name{
+  font-size:16px; color:#111; font-weight:700;
+}
+.qty-thumb{
+  width:72px; height:72px; border-radius:6px; overflow:hidden;
+  justify-self:center;
+}
+.qty-thumb img{ width:100%; height:100%; object-fit:contain; display:block; }
+
+/* Rechts: drie opties naast elkaar */
+.qty-right{
+  display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:8px;
+}
+
+/* Kleine keuze-kaartjes (radio-gedrag per rij) */
+.qty-card{
+  position:relative;
+  display:grid; place-items:center;
+  min-height:70px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  cursor:pointer; user-select:none;
+  transition:border-color .22s ease, color .22s ease;
+}
+.qty-card > input{ position:absolute; opacity:0; width:1px; height:1px; }
+.qty-label{ font-size:16px; color:#000; transition: color .22s ease; }
+@media (hover:hover){
+  .qty-card:hover{ border-color: var(--yellow); }
+  .qty-card:hover .qty-label{ color: var(--yellow); }
+}
+.qty-card.is-selected{
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px rgba(255,205,10,.14);
+}
+.qty-card.is-selected .qty-label{ color: var(--yellow); }
+
+/* Vinkje rechtsboven HALF buiten – GEEN SHADOW */
+.qty-check{
+  position:absolute; right:-8px; top:-8px;
+  width:22px; height:22px;
+  opacity:0; transform: scale(.9);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events:none;
+}
+.qty-card.is-selected .qty-check{ opacity:1; transform: scale(1); }
+
+/* ===== Stap 4: Kleur – grotere thumbnail, exact linksboven */
+#step-kleur .color-card .opt-thumb{
+  left:8px; top:8px; width:88px; height:88px;
+}
+
+/* ===== Stap 5: Termijn – kleine kaarten zoals stap 2 + vinkje half buiten ===== */
+.term-grid{
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+#step-termijn .term-card{
+  padding: 0;
+  min-height: 70px;
+  display: grid; place-items: center;
+  border:1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: none; /* geen extra shadow */
+}
+#step-termijn .term-card .opt-label{ position: static; font-size:16px; }
+#step-termijn .term-card .opt-check{
+  top:-8px; right:-8px; bottom:auto; width:22px; height:22px;
+}
+
+/* ===== Stap 6: Gegevens (donkerblauw blok) ===== */
+#step-gegevens{ background: var(--blue); color:#fff; border-radius: 12px; }
+.form-panel{ padding: clamp(18px, 3vw, 28px); }
+
+.contact-step__head--dark .contact-step__title{ color:#fff; }
+.contact-step__head--dark .contact-step__hint{ color:#e7e7e7; }
+
+.fields{ display:grid; gap:12px; }
+
+/* Field basis */
+.field{
+  position: relative;
+  display:block;
+}
+.field label{
+  display:block; color:#fff; font-size:14px; margin: 0 0 6px;
+}
+.field input,
+.field textarea{
+  width:100%; padding:12px 14px;
+  border:1px solid var(--border); border-radius:8px;
+  background:#fff; color:#000;
+  outline:none;
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+.field textarea{ resize: vertical; }
+
+/* Focus = witte gloed */
+.field input:focus,
+.field textarea:focus{
+  border-color:#fff;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.18);
+}
+
+/* Valid / invalid states (persistent) */
+.field.is-valid input,
+.field.is-valid textarea{
+  border-color: var(--ok);
+  box-shadow: 0 0 0 2px rgba(46,125,50,.20);
+}
+.field.has-error input,
+.field.has-error textarea{
+  border-color: var(--err);
+  box-shadow: 0 0 0 2px rgba(229,57,53,.20);
+}
+
+/* 1s pulse bij submit op ontbrekend veld */
+.field.is-error input,
+.field.is-error textarea{
+  border-color: var(--err) !important;
+  box-shadow: 0 0 0 2px rgba(229,57,53,.28) !important;
+}
+
+/* Markers rechts (vinkje/kruis) */
+.field__mark{
+  position:absolute; right:10px; top:36px;
+  width:18px; height:18px; opacity:0; transform: scale(.9);
+  transition: opacity .18s ease, transform .18s ease;
+  pointer-events:none;
+}
+.field.is-valid .field__mark.ok{ opacity:1; transform: scale(1); }
+.field.has-error .field__mark.err{ opacity:1; transform: scale(1); }
+
+/* Klein rood label rechtsboven in het veld */
+.field__badge{
+  position:absolute; right:10px; top: -10px;
+  background: transparent; color: var(--err);
+  font-size:12px; line-height:1;
+  opacity:0; transform: translateY(-4px);
+  transition: opacity .18s ease, transform .18s ease;
+}
+.field.has-error .field__badge{ opacity:1; transform: translateY(0); }
+
+/* Split velden (2 kolommen) */
+.field--split{ display:grid; grid-template-columns: 1fr 220px; gap: 12px; }
+.field--split .field__col{ position: relative; }
+@media (max-width: 720px){
+  .field--split{ grid-template-columns: 1fr; }
+}
+
+/* Submit-knop rij */
+.contact-actions{ margin-top: 8px; display:flex; align-items:center; gap:12px; }
+.contact-actions--form{ justify-content: flex-start; }
+
+/* ===== Sticky stappenbalk ===== */
+.steps{
+  position:fixed; left:0; right:0; bottom:0;
+  background:#fff; border-top:1px solid #eee;
+  z-index: 800;
+  height: var(--steps-h);
+  display:grid; place-items:center;
+}
+.steps__wrap{
+  position:relative;
+  width:min(1100px,92vw);
+  margin:0 auto;
+}
+.steps__list{
+  display:grid; grid-template-columns: repeat(6, 1fr);
+  align-items:center; justify-items:center;
+  list-style:none; margin:0; padding: 10px 0 8px;
+  position:relative; z-index:1;
+}
+.step{
+  display:flex; flex-direction:column; align-items:center;
+  color:#777; text-align:center;
+}
+.step__circle{
+  width:var(--step-dot); height:var(--step-dot); border-radius:50%;
+  display:grid; place-items:center;
+  border:2px solid #c8c8c8; color:#777; background:transparent;
+  font-weight:700; transition: border-color .2s ease, color .2s ease, background-color .2s ease;
+  font-size: 12px;
+}
+.step__label{
+  margin-top:6px; font-size:12px; line-height:1; color:#777;
+  transition: color .2s ease;
+}
+.step.is-current .step__circle,
+.step.is-done .step__circle{ border-color: var(--yellow); background: var(--yellow); color:#000; }
+.step.is-current .step__label,
+.step.is-done .step__label{ color: var(--yellow); }
+
+/* Lijnen weg */
+.steps__lines{ display:none !important; }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .finder__next, .about-btn__icon, .about-btn__icon img { transition:none !important; }
+  .opt-card, .qty-card{ transition:none !important; }
+  .opt-check, .qty-check{ transition:none !important; }
+  .step__circle, .step__label{ transition:none !important; }
+  .field input, .field textarea, .field__mark, .field__badge{ transition:none !important; }
+}
+
+/* ===== Header-kleur fix (alleen deze pagina) ===== */
+.site-header .header-bar,
+.site-header .menu-toggle { color:#fff !important; }

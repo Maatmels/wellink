@@ -7,48 +7,335 @@
 
   <!-- Styles -->
   <link rel="stylesheet" href="../css/header.css" />
-  <link rel="stylesheet" href="../css/footer.css" />
   <link rel="stylesheet" href="../css/contact.css" />
 </head>
 <body>
   <!-- HEADER -->
   <div id="header-root" data-include="../partials/header.html"></div>
 
-  <main>
-    <section class="contact" aria-label="Contact">
-      <div class="contact__wrap">
-        <div class="contact-card">
-          <h1 class="contact-title">Contact</h1>
-          <p class="contact-sub">We hebben uw voorkeur alvast ingevuld:</p>
+  <main id="page-content">
+    <!-- ===== Intro / hero (volledige “pagina”) ===== -->
+    <section class="contact-hero" aria-label="Configurator introductie">
+      <div class="contact-hero__wrap">
+        <p class="overline">Een persoonlijke offerte op maat</p>
+        <h1 class="contact-hero__title">Stel uw kozijnen samen</h1>
+        <p class="contact-hero__sub">
+          Stel vrijblijvend uw ideale kozijnen, schuifpui en/of deuren samen, op basis van uw woning en wensen.
+          Wij maken vervolgens een passende aanbieding. Liever eerst bekijken hoe wij werken?
+          <a href="/werkwijze/">Download onze werkwijze hier</a>!
+        </p>
+        <p class="contact-hero__mini">Configureer uw kozijn binnen 1 minuut</p>
 
-          <!-- (Toekomstig) formulier -->
-          <form id="contact-form" class="contact-form" action="#" method="post" novalidate>
-            <div class="contact-options" id="contact-options">
-              <label class="contact-opt">
-                <input type="checkbox" id="c-kozijnen" name="voorkeuren" value="kozijnen" />
-                <span>Kozijnen</span>
-              </label>
-              <label class="contact-opt">
-                <input type="checkbox" id="c-schuifpuien" name="voorkeuren" value="schuifpuien" />
-                <span>Schuifpuien</span>
-              </label>
-              <label class="contact-opt">
-                <input type="checkbox" id="c-deuren" name="voorkeuren" value="deuren" />
-                <span>Deuren</span>
-              </label>
+        <!-- Zwarte knop -->
+        <a href="#step-opstelling" class="finder__next js-scroll-start">
+          <span class="finder__nextLabel">Start met samenstellen</span>
+          <span class="about-btn__icon" aria-hidden="true">
+            <img class="arrow-right" src="../images/pijlrechts.png" alt="">
+          </span>
+        </a>
+      </div>
+    </section>
 
-              <!-- voor toekomstige submits / e-mail: altijd actuele set in CSV -->
-              <input type="hidden" id="voorkeur-field" name="voorkeur" value="" />
+    <!-- ===== Stap 1: Wat zoekt u? (volledige “pagina”) ===== -->
+    <section id="step-opstelling" class="contact-step" aria-label="Stap 1 - Wat zoekt u?">
+      <div class="contact-step__wrap">
+        <header class="contact-step__head">
+          <h2 class="contact-step__title">Wat zoekt u?</h2>
+          <p class="contact-step__hint">U kan meerdere producten aanvinken.</p>
+        </header>
+
+        <!-- Selectie-kaarten -->
+        <form id="contact-form" class="select-form" action="#" method="post" novalidate>
+          <div class="opts-grid" id="contact-options">
+            <!-- Kozijnen -->
+            <label class="opt-card" data-key="kozijnen">
+              <input type="checkbox" id="c-kozijnen" name="voorkeuren" value="kozijnen" />
+              <span class="opt-thumb">
+                <img src="../images/kozijn.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Kozijnen</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <!-- Schuifpuien -->
+            <label class="opt-card" data-key="schuifpuien">
+              <input type="checkbox" id="c-schuifpuien" name="voorkeuren" value="schuifpuien" />
+              <span class="opt-thumb">
+                <img src="../images/schuifpui.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Schuifpuien</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <!-- Deuren -->
+            <label class="opt-card" data-key="deuren">
+              <input type="checkbox" id="c-deuren" name="voorkeuren" value="deuren" />
+              <span class="opt-thumb">
+                <img src="../images/deur.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Deuren</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+          </div>
+
+          <!-- Altijd actuele set in CSV voor eventuele submit/e-mail -->
+          <input type="hidden" id="voorkeur-field" name="voorkeur" value="" />
+
+          <div class="contact-actions">
+            <a class="finder__next js-next-step" href="#">
+              <span class="finder__nextLabel">Volgende stap</span>
+              <span class="about-btn__icon" aria-hidden="true">
+                <img class="arrow-right" src="../images/pijlrechts.png" alt="">
+              </span>
+            </a>
+            <span class="form-error" id="err-step1" role="alert" aria-live="polite" hidden>Kies een optie</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== Stap 2: Aantallen (automatisch door) ===== -->
+    <section id="step-aantallen" class="contact-step contact-step--quantities is-hidden" aria-label="Stap 2 - Aantallen">
+      <div class="contact-step__wrap">
+        <header class="contact-step__head">
+          <h2 class="contact-step__title">Hoeveel producten heeft u nodig?</h2>
+          <p class="contact-step__hint">Dit is een indicatie. We komen altijd bij u langs om te meten.</p>
+        </header>
+
+        <!-- Dynamisch gevuld op basis van stap 1 -->
+        <div class="qty-groups" id="qty-groups"></div>
+      </div>
+    </section>
+
+    <!-- ===== Stap 3: Afwerking (automatisch door na keuze) ===== -->
+    <section id="step-afwerking" class="contact-step contact-step--finish is-hidden" aria-label="Stap 3 - Afwerking">
+      <div class="contact-step__wrap">
+        <header class="contact-step__head">
+          <h2 class="contact-step__title">Wat is uw gewenste afwerking?</h2>
+          <p class="contact-step__hint">Geef hieronder uw wensen aan ons door.</p>
+        </header>
+
+        <form id="finish-form" class="select-form" action="#" method="post" novalidate>
+          <div class="opts-grid" id="finish-options">
+            <!-- Houtnerf -->
+            <label class="opt-card finish-card" data-key="houtnerf">
+              <input type="radio" name="finish" value="houtnerf" />
+              <span class="opt-thumb">
+                <img src="../images/houtnerf.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Houtnerf</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <!-- Glad -->
+            <label class="opt-card finish-card" data-key="glad">
+              <input type="radio" name="finish" value="glad" />
+              <span class="opt-thumb">
+                <img src="../images/glad.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Glad</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <!-- Zandstructuur mat -->
+            <label class="opt-card finish-card" data-key="zandstructuur">
+              <input type="radio" name="finish" value="zandstructuur" />
+              <span class="opt-thumb">
+                <img src="../images/zandstructuur.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Zandstructuur mat</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== Stap 4: Kleur (automatisch door na keuze) ===== -->
+    <section id="step-kleur" class="contact-step contact-step--color is-hidden" aria-label="Stap 4 - Kleur">
+      <div class="contact-step__wrap">
+        <header class="contact-step__head">
+          <h2 class="contact-step__title">Welke kleur heeft uw voorkeur?</h2>
+          <p class="contact-step__hint">We horen het graag!</p>
+        </header>
+
+        <form id="color-form" class="select-form" action="#" method="post" novalidate>
+          <div class="opts-grid" id="color-options">
+            <label class="opt-card color-card" data-key="antraciet">
+              <input type="radio" name="color" value="antraciet" />
+              <span class="opt-thumb">
+                <img src="../images/kleur-antraciet.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Antraciet</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card color-card" data-key="wit">
+              <input type="radio" name="color" value="wit" />
+              <span class="opt-thumb">
+                <img src="../images/kleur-wit.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Wit</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card color-card" data-key="zwart">
+              <input type="radio" name="color" value="zwart" />
+              <span class="opt-thumb">
+                <img src="../images/kleur-zwart.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Zwart</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card color-card" data-key="grijs">
+              <input type="radio" name="color" value="grijs" />
+              <span class="opt-thumb">
+                <img src="../images/kleur-grijs.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Grijs</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card color-card" data-key="overig">
+              <input type="radio" name="color" value="overig" />
+              <span class="opt-thumb">
+                <img src="../images/kleur-overig.png" alt="" aria-hidden="true" />
+              </span>
+              <span class="opt-label">Overig</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== Stap 5: Termijn (AUTOMATISCH door bij keuze) ===== -->
+    <section id="step-termijn" class="contact-step contact-step--term is-hidden" aria-label="Stap 5 - Termijn">
+      <div class="contact-step__wrap">
+        <header class="contact-step__head">
+          <h2 class="contact-step__title">Gewenste uitvoeringstermijn</h2>
+          <p class="contact-step__hint">Indicatie</p>
+        </header>
+
+        <form id="term-form" class="select-form" action="#" method="post" novalidate>
+          <div class="opts-grid term-grid" id="term-options">
+            <label class="opt-card term-card" data-key="zsm">
+              <input type="radio" name="term" value="zsm" />
+              <span class="opt-label">Z.S.M.</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card term-card" data-key="3-6">
+              <input type="radio" name="term" value="3-6" />
+              <span class="opt-label">3 - 6 maanden</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card term-card" data-key="6-9">
+              <input type="radio" name="term" value="6-9" />
+              <span class="opt-label">6 - 9 maanden</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+
+            <label class="opt-card term-card" data-key="9plus">
+              <input type="radio" name="term" value="9plus" />
+              <span class="opt-label">9+ maanden</span>
+              <img class="opt-check" src="../images/vinkje.png" alt="" aria-hidden="true" />
+            </label>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===== Stap 6: Gegevens (DONKERBLAUW BLOK) ===== -->
+    <section id="step-gegevens" class="contact-step contact-step--details is-hidden" aria-label="Stap 6 - Gegevens">
+      <div class="contact-step__wrap">
+        <div class="form-panel">
+          <header class="contact-step__head contact-step__head--dark">
+            <h2 class="contact-step__title">Ontvang uw vrijblijvende offerte</h2>
+            <p class="contact-step__hint">Om uw offerte op te kunnen sturen, hebben we wat gegevens van u nodig.</p>
+          </header>
+
+          <form id="details-form" novalidate>
+            <div class="fields">
+              <!-- Naam -->
+              <div class="field" data-name="naam">
+                <label for="f-naam">Naam</label>
+                <input id="f-naam" type="text" autocomplete="name" />
+                <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                <span class="field__badge" aria-hidden="true">Kies een optie</span>
+              </div>
+
+              <!-- Email -->
+              <div class="field" data-name="email">
+                <label for="f-email">E-mailadres</label>
+                <input id="f-email" type="email" inputmode="email" autocomplete="email" />
+                <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                <span class="field__badge" aria-hidden="true">Kies een optie</span>
+              </div>
+
+              <!-- Telefoon -->
+              <div class="field" data-name="tel">
+                <label for="f-tel">Telefoonnummer</label>
+                <input id="f-tel" type="tel" inputmode="tel" autocomplete="tel" />
+                <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                <span class="field__badge" aria-hidden="true">Kies een optie</span>
+              </div>
+
+              <!-- Adres + Huisnr -->
+              <div class="field field--split" data-name="adres">
+                <div class="field__col">
+                  <label for="f-adres">Adres</label>
+                  <input id="f-adres" type="text" autocomplete="address-line1" />
+                  <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                  <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                  <span class="field__badge" aria-hidden="true">Kies een optie</span>
+                </div>
+                <div class="field__col" data-name="huisnr">
+                  <label for="f-huisnr">Huisnummer</label>
+                  <input id="f-huisnr" type="text" inputmode="numeric" />
+                  <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                  <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                  <span class="field__badge" aria-hidden="true">Kies een optie</span>
+                </div>
+              </div>
+
+              <!-- Postcode + Plaats -->
+              <div class="field field--split" data-name="pcplaats">
+                <div class="field__col" data-name="postcode">
+                  <label for="f-postcode">Postcode</label>
+                  <input id="f-postcode" type="text" inputmode="text" placeholder="1234 AB" />
+                  <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                  <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                  <span class="field__badge" aria-hidden="true">Kies een optie</span>
+                </div>
+                <div class="field__col" data-name="plaats">
+                  <label for="f-plaats">Plaatsnaam</label>
+                  <input id="f-plaats" type="text" autocomplete="address-level2" />
+                  <img class="field__mark ok" src="../images/vinkjegroen.png" alt="" aria-hidden="true" />
+                  <img class="field__mark err" src="../images/kruisjerood.png" alt="" aria-hidden="true" />
+                  <span class="field__badge" aria-hidden="true">Kies een optie</span>
+                </div>
+              </div>
+
+              <!-- Opmerkingen -->
+              <div class="field" data-name="opmerkingen">
+                <label for="f-opm">Heeft u opmerkingen of vragen?</label>
+                <textarea id="f-opm" rows="4"></textarea>
+              </div>
             </div>
 
-            <div class="contact-actions">
-              <a class="about-btn" href="/">
-                <span class="about-btn__label">Terug naar home</span>
+            <div class="contact-actions contact-actions--form">
+              <button type="submit" class="finder__next contact-submit" disabled>
+                <span class="finder__nextLabel">Stuur mij de offerte</span>
                 <span class="about-btn__icon" aria-hidden="true">
-                  <img class="arrow-yellow" src="../images/pijlgeel.png" alt="">
-                  <img class="arrow-white"  src="../images/pijlwit.png"  alt="">
+                  <img class="arrow-right" src="../images/pijlrechts.png" alt="">
                 </span>
-              </a>
+              </button>
             </div>
           </form>
         </div>
@@ -56,12 +343,65 @@
     </section>
   </main>
 
-  <!-- FOOTER -->
-  <div id="footer-root" data-include="../partials/footer.html"></div>
+  <!-- ===== Sticky stappenbalk onderin ===== -->
+  <nav class="steps" aria-label="Voortgang stappen">
+    <div class="steps__wrap">
+      <ol class="steps__list">
+        <li class="step" data-step="1">
+          <span class="step__circle">1</span>
+          <span class="step__label">Opstelling</span>
+        </li>
+        <li class="step" data-step="2">
+          <span class="step__circle">2</span>
+          <span class="step__label">Aantallen</span>
+        </li>
+        <li class="step" data-step="3">
+          <span class="step__circle">3</span>
+          <span class="step__label">Afwerking</span>
+        </li>
+        <li class="step" data-step="4">
+          <span class="step__circle">4</span>
+          <span class="step__label">Kleur</span>
+        </li>
+        <li class="step" data-step="5">
+          <span class="step__circle">5</span>
+          <span class="step__label">Termijn</span>
+        </li>
+        <li class="step" data-step="6">
+          <span class="step__circle">6</span>
+          <span class="step__label">Gegevens</span>
+        </li>
+      </ol>
+
+      <div class="steps__lines" aria-hidden="true"></div>
+    </div>
+  </nav>
+
+  <!-- ===== Inline partial loader (header) ===== -->
+  <script>
+  (function () {
+    async function includePartials() {
+      const nodes = Array.from(document.querySelectorAll('[data-include]'));
+      await Promise.all(nodes.map(async (el) => {
+        const url = el.getAttribute('data-include');
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
+          const html = await res.text();
+          el.innerHTML = html;
+        } catch (err) {
+          console.error('Partial laden mislukt:', url, err);
+        }
+      }));
+      document.dispatchEvent(new Event('partials:ready'));
+    }
+    if (document.readyState !== 'loading') includePartials();
+    else document.addEventListener('DOMContentLoaded', includePartials);
+  })();
+  </script>
 
   <!-- Scripts -->
   <script defer src="../js/header.js"></script>
-  <script defer src="../js/footer.js"></script>
   <script defer src="../js/contact.js"></script>
 </body>
-
+</html>
